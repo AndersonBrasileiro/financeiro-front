@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro - Login</title>
+    <!-- Bootstrap 5 CSS para Design Responsivo Dinâmico -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+
+    <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+        <div class="text-center mb-4">
+            <h2 class="text-primary fw-bold">Finanças API</h2>
+            <p class="text-muted">Acesse sua conta para gerenciar saldos</p>
+        </div>
+
+        <!-- Formulário de Autenticação -->
+        <form id="formLogin">
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" id="email" class="form-control" placeholder="seu@email.com" required>
+            </div>
+            <div class="mb-3">
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" id="senha" class="form-control" placeholder="••••••••" required>
+            </div>
+            
+            <!-- Mensagem de erro dinâmica capturada do GlobalExceptionHandler -->
+            <div id="mensagemErro" class="alert alert-danger d-none" role="alert"></div>
+
+            <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2">Entrar no Sistema</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <p class="small text-muted">Não tem uma conta? <a href="registrar.html" class="text-decoration-none">Cadastre-se aqui</a></p>
+        </div>
+    </div>
+
+    <!-- Script de Integração com o Backend -->
+    <script src="login.js"></script>
+</body>
+</html>

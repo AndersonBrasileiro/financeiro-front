@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanças API - Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+
+    <!-- Barra de Navegação Superior -->
+    <nav class="navbar navbar-dark bg-primary shadow-sm mb-4">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1 fw-bold">🚀 Finanças API - Painel</span>
+            <button id="btnSair" class="btn btn-outline-light btn-sm fw-bold">Sair do Sistema</button>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h3 class="fw-bold text-secondary">Resumo do Fluxo de Caixa Futuro</h3>
+                <p class="text-muted">Indicadores baseados estritamente em lançamentos em aberto</p>
+            </div>
+        </div>
+
+        <!-- Linha dos Cards de Saldos do Nosso DTO -->
+        <div class="row g-3">
+            <!-- Card 1: Receitas em Aberto -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <h6 class="text-success fw-bold uppercase small">Total a Receber</h6>
+                    <h2 id="totalReceber" class="fw-bold mt-2 text-dark">R$ 0,00</h2>
+                </div>
+            </div>
+
+            <!-- Card 2: Despesas em Aberto -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <h6 class="text-danger fw-bold uppercase small">Total a Pagar</h6>
+                    <h2 id="totalPagar" class="fw-bold mt-2 text-dark">R$ 0,00</h2>
+                </div>
+            </div>
+
+            <!-- Card 3: Saldo Projetado -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4 bg-primary text-white">
+                    <h6 class="text-white-50 fw-bold uppercase small">Saldo Projetado Futuro</h6>
+                    <h2 id="saldoProjetado" class="fw-bold mt-2">R$ 0,00</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Inteligência do Dashboard -->
+    <script src="dashboard.js"></script>
+</body>
+</html>
