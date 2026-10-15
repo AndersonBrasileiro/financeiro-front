@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanças API - Contas a Receber</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-light">
+
+    <!-- Barra de Navegação Superior com Menu Configurações Dropdown -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container">
+        <span class="navbar-brand h1 mb-0 fw-bold">🚀 Finanças API</span>
+        
+        <div class="d-flex align-items-center gap-3">
+            <a href="dashboard.html" class="btn btn-outline-light btn-sm fw-bold">Dashboard</a>
+            <a href="pagar.html" class="btn btn-outline-light btn-sm fw-bold">Contas a Pagar</a>
+            <a href="receber.html" class="btn btn-outline-light btn-sm fw-bold">Contas a Receber</a>
+            
+            <!-- MENU CONFIGURAÇÕES DROPDOWN -->
+            <div class="dropdown">
+                <button class="btn btn-outline-light btn-sm dropdown-toggle fw-bold" type="button" id="menuConfig" data-bs-toggle="dropdown" aria-expanded="false">
+                    ⚙️ Configurações
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="menuConfig">
+                    <li><a class="dropdown-item fw-bold text-secondary" href="contas.html">📂 Cadastrar Contas Bancárias</a></li>
+                    <li><a class="dropdown-item fw-bold text-secondary" href="centros.html">📂 Cadastrar Centros de Custo</a></li>
+                    <li><a class="dropdown-item fw-bold text-secondary" href="categorias.html">📂 Cadastrar Categorias</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><span class="dropdown-item-text text-muted small">Mais cadastros em breve...</span></li>
+                </ul>
+            </div>
+
+            <button id="btnSair" class="btn btn-danger btn-sm fw-bold">Sair</button>
+        </div>
+    </div>
+</nav>
+
+
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h3 class="fw-bold text-success">Contas a Receber (Receitas)</h3>
+                <p class="text-muted">Gerencie suas entradas de caixa, faturamentos e salários</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Formulário Lateral de Inclusão de Receitas -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <h5 class="fw-bold text-success mb-3">Nova Receita</h5>
+                    <form id="formReceber">
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição da Receita</label>
+                            <input type="text" id="descricao" class="form-control"
+                                placeholder="Ex: Salário, Venda de Produto" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="valor" class="form-label">Valor (R$)</label>
+                            <input type="number" step="0.01" id="valor" class="form-control" placeholder="0.00"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dataVencimento" class="form-label">Data de Recebimento</label>
+                            <input type="date" id="dataVencimento" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectConta" class="form-label">Depositar em Qual Conta?</label>
+                            <select id="selectConta" class="form-control" required>
+                                <option value="">Carregando suas contas...</option>
+                            </select>
+                        </div>
+                        <!-- Campo 1: Centro de Custo (Já existia) -->
+                        <div class="mb-3">
+                            <label for="selectCentroCusto" class="form-label">Centro de Custo / Destinação</label>
+                            <select id="selectCentroCusto" class="form-control" required>
+                                <option value="">Carregando centros de custo...</option>
+                            </select>
+                        </div>
+
+                        <!-- Campo 2: Categoria Física (NOVO CAMPO ADICIONADO) -->
+                        <div class="mb-3">
+                            <label for="selectCategoria" class="form-label">Categoria do Lançamento</label>
+                            <select id="selectCategoria" class="form-control" required>
+                                <option value="">Carregando categorias...</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="recebido">
+                            <label class="form-check-input-label fw-bold text-success" for="recebido">Marcar como
+                                RECEBIDA (Liquidar agora)</label>
+                        </div>
+
+                        <div id="mensagemAlerta" class="alert d-none small" role="alert"></div>
+                        <button type="submit" class="btn btn-success w-100 fw-bold py-2 mt-2">Salvar Receita</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabela de Listagem de Receitas -->
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <h5 class="fw-bold text-secondary mb-3">Histórico de Contas a Receber</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Conta de Entrada</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaReceber">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">Nenhum lançamento encontrado.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="receber.js"></script>
+     <!-- Script do Bootstrap local para fazer o Dropdown abrir -->
+    <script src="bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

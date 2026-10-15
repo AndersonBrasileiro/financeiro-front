@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        // 3. REQUISIÇÃO PROTEGIDA: Busca os dados consolidados do Dashboard do Usuário 1 (Passo M do .http)
-        // Como o H2 injeta o Usuário Comercial como ID 1 ou 2 no DataInitializer, usaremos o ID 1 para o teste do MVP por enquanto.
-        const response = await fetch('http://localhost:8080/api/dashboard/usuario/2', {
+        // 3. 🌟 ATUALIZADO: Ajustado para o ID 1, que é o seu usuário real cadastrado na tela agora!
+        // (Nota: Se o seu backend já aceitar a rota genérica '/api/dashboard' sem ID na URL, pode mudar para ela)
+        const response = await fetch('http://localhost:8080/api/dashboard/usuario/1', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`, // Injeta o passaporte de letrinhas na catraca!

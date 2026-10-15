@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanças API - Categorias</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+
+    <!-- Barra de Navegação Superior Unificada -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+        <div class="container">
+            <span class="navbar-brand h1 mb-0 fw-bold">🚀 Finanças API</span>
+            <div class="d-flex align-items-center gap-3">
+                <a href="dashboard.html" class="btn btn-outline-light btn-sm fw-bold">Dashboard</a>
+                <a href="pagar.html" class="btn btn-outline-light btn-sm fw-bold">Contas a Pagar</a>
+                <a href="receber.html" class="btn btn-outline-light btn-sm fw-bold">Contas a Receber</a>
+                <div class="dropdown">
+                    <button class="btn btn-light btn-sm dropdown-toggle fw-bold text-primary" type="button" id="menuConfig" data-bs-toggle="dropdown" aria-expanded="false">
+                        ⚙️ Configurações
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="menuConfig">
+                        <li><a class="dropdown-item fw-bold text-secondary" href="contas.html">📂 Cadastrar Contas Bancárias</a></li>
+                        <li><a class="dropdown-item fw-bold text-secondary" href="centros.html">📂 Cadastrar Centros de Custo</a></li>
+                        <li><a class="dropdown-item fw-bold text-secondary" href="categorias.html">📂 Cadastrar Categorias</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><span class="dropdown-item-text text-muted small">Mais cadastros em breve...</span></li>
+                    </ul>
+                </div>
+                <button id="btnSair" class="btn btn-danger btn-sm fw-bold">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h3 class="fw-bold text-secondary">Plano de Categorias (Árvore)</h3>
+                <p class="text-muted">Cadastre seus Grupos Principais ou Subcategorias para organizar seus lançamentos</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Formulário Lateral de Inclusão -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <h5 class="fw-bold text-primary mb-3">Novo Cadastro</h5>
+                    <form id="formCategoria">
+                        <div class="mb-3">
+                            <label for="nomeCategoria" class="form-label">Nome da Categoria / Subcategoria</label>
+                            <input type="text" id="nomeCategoria" class="form-control" placeholder="Ex: Habitação, Aluguel, Internet" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipoCategoria" class="form-label">Tipo</label>
+                            <select id="tipoCategoria" class="form-control" required>
+                                <option value="DESPESA">Custo (Despesa)</option>
+                                <option value="RECEITA">Receita (Entrada)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- CAMPO DE VINCULO RELACIONAL (CATEGORIA PAI) -->
+                        <div class="mb-3">
+                            <label for="selectCategoriaPai" class="form-label">Vincular a um Grupo / Categoria Pai?</label>
+                            <select id="selectCategoriaPai" class="form-control">
+                                <option value="">-- Nenhuma (Esta será uma Categoria Pai / Grupo) --</option>
+                            </select>
+                            <div class="form-text text-muted small">Deixe em branco para criar um Grupo Principal. Selecione uma opção para criar uma Subcategoria.</div>
+                        </div>
+
+                        <div id="mensagemAlerta" class="alert d-none small" role="alert"></div>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2">Salvar Registro</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabela Lateral de Listagem -->
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <h5 class="fw-bold text-secondary mb-3">Estrutura de Categorias Ativas</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Estrutura da Categoria</th>
+                                    <th>Tipo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaCategorias">
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">Carregando registros...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="categorias.js"></script>
+</body>
+</html>
