@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alerta.classList.remove('d-none', 'alert-danger');
                 alerta.classList.add('alert-success');
                 document.getElementById('formCategoria').reset();
-                listarCategorias(); 
+                listarCategorias();
                 carregarDropdownCategoriasPai(); // Atualiza o seletor com a nova pai
             } else {
                 const err = await response.json();
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 const categorias = await response.json();
-                tabela.innerHTML = ''; 
+                tabela.innerHTML = '';
 
                 if (!categorias || categorias.length === 0) {
                     tabela.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">Nenhuma categoria cadastrada.</td></tr>`;
@@ -90,9 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Verifica de forma segura se há um objeto pai associado em qualquer nomenclatura
                     const objetoPai = c.categoriaPai || c.pai || c.categoriaPrincipal;
-                    
-                    const nomeExibicao = objetoPai 
-                        ? `${c.nome} <small class="text-muted">(Sub de ${objetoPai.nome})</small>` 
+
+                    const nomeExibicao = objetoPai
+                        ? `${c.nome} <small class="text-muted">(Sub de ${objetoPai.nome})</small>`
                         : `📁 <b>${c.nome}</b>`;
 
                     const linha = document.createElement('tr');
@@ -112,35 +112,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-        // 3. CORRIGIDO: Carrega dinamicamente as categorias pai direto da API unificada
+    // 3. ATUALIZADO COM VALIDAÇÃO: Carrega as categorias pai filtrando estritamente pelo Tipo selecionado
     async function carregarDropdownCategoriasPai() {
         const select = document.getElementById('selectCategoriaPai');
         if (!select) return;
 
+        // Captura o tipo selecionado pelo usuário no momento (CUSTO ou RECEITA)
+        const tipoSelecionado = document.getElementById('tipoCategoria').value;
+
         try {
-            // Bate na rota principal unificada que criamos no CategoriaController
             const response = await fetch('http://localhost:8080/api/categorias', {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            
+
             if (response.ok) {
                 const todasCategorias = await response.json();
                 select.innerHTML = '<option value="">-- Nenhuma (Esta será uma Categoria Pai) --</option>';
-                
-                // Filtra no front-end: só vira opção no dropdown se for uma Categoria Nível 1 (Pai é null)
+
                 todasCategorias.forEach(cat => {
                     const objetoPai = cat.categoriaPai || cat.pai || cat.categoriaPrincipal;
-                    
-                    if (!objetoPai) { // Se não tem pai, ela é uma categoria principal legítima!
+
+                    // Só vira opção se for Pai (objetoPai é null) E se o tipo for IGUAL ao selecionado na tela
+                    if (!objetoPai) {
                         const valorFluxo = cat.tipo || cat.fluxo || 'DESPESA';
-                        const tipoTexto = valorFluxo.toString().toUpperCase() === 'RECEITA' ? 'Receita' : 'Custo';
-                        select.innerHTML += `<option value="${cat.id}">${cat.nome} (${tipoTexto})</option>`;
+
+                        // Garante que o agrupador bata exatamente com o tipo selecionado
+                        if (valorFluxo.toString().toUpperCase() === tipoSelecionado.toString().toUpperCase()) {
+                            const tipoTexto = valorFluxo.toString().toUpperCase() === 'RECEITA' ? 'Receita' : 'Custo';
+                            select.innerHTML += `<option value="${cat.id}">${cat.nome} (${tipoTexto})</option>`;
+                        }
                     }
                 });
             }
         } catch (e) { console.error('Erro ao carregar seletor de categorias principais:', e); }
     }
+
+    // 🌟 GATILHO DE INTEGRIDADE: Toda vez que o usuário mudar o Tipo (Custo/Receita), 
+    // atualiza o dropdown de pais para esconder as opções incompatíveis!
+    document.getElementById('tipoCategoria').addEventListener('change', () => {
+        carregarDropdownCategoriasPai();
+    });
+
 
 
     document.getElementById('btnSair').addEventListener('click', () => {
