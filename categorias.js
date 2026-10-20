@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/api/categorias', {
+            const response = await fetch(`${API_BASE_URL}/categorias`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function listarCategorias() {
         const tabela = document.getElementById('tabelaCategorias');
         try {
-            const response = await fetch('http://localhost:8080/api/categorias', {
+            const response = await fetch(`${API_BASE_URL}/categorias`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tipoSelecionado = document.getElementById('tipoCategoria').value;
 
         try {
-            const response = await fetch('http://localhost:8080/api/categorias', {
+            const response = await fetch(`${API_BASE_URL}/categorias`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

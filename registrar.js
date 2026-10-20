@@ -14,7 +14,7 @@ document.getElementById('formRegistrar').addEventListener('submit', async (event
 
     try {
         // 2. Dispara a requisição de cadastro para o endpoint público do Java
-        const response = await fetch('http://localhost:8080/api/auth/registrar', {
+        const response = await fetch(`${API_BASE_URL}/auth/registrar`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

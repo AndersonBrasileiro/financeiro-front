@@ -12,11 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarDropdownCentrosReceita(); // Ativado no topo de forma independente!
     listarLancamentosReceber();
 
-    // 1. CARREGA AS CONTAS DO USUÁRIO NO DROPDOWN
+    // 1. CARREGA AS CONTAS DO USUÁRIO NO DROPDOWN - CENTRALIZADO
     async function carregarDropdownContas() {
         const select = document.getElementById('selectConta');
         try {
-            const response = await fetch('http://localhost:8080/api/contas', {
+            const response = await fetch(`${API_BASE_URL}/contas`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -30,11 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar contas', e); }
     }
 
-        // 2. CORRIGIDO WITH TRAVA: Carrega APENAS subcategorias (filhas) do tipo "RECEITA"
+    // 2. CARREGA AS CATEGORIAS FILTRADAS POR RECEITA - CENTRALIZADO
     async function carregarDropdownCategoriasReais() {
         const select = document.getElementById('selectCategoria');
         try {
-            const response = await fetch('http://localhost:8080/api/categorias', {
+            const response = await fetch(`${API_BASE_URL}/categorias`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 categorias.forEach(cat => {
                     const valorFluxo = cat.fluxo || cat.tipo || 'DESPESA';
                     
-                    // 🌟 REGRA DE NEGÓCIO: Só exibe se for RECEITA E se possuir uma Categoria Pai (é filha)
                     if (valorFluxo.toString().toUpperCase() === 'RECEITA' && cat.categoriaPai) {
                         select.innerHTML += `<option value="${cat.id}">${cat.nome} (${cat.categoriaPai.nome})</option>`;
                     }
@@ -54,13 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar categorias reais', e); }
     }
 
-
-    // 3. CARREGA OS CENTROS DE CUSTO FILTRADOS POR "RECEITA"
+    // 3. CARREGA OS CENTROS DE CUSTO FILTRADOS POR "RECEITA" - CENTRALIZADO
     async function carregarDropdownCentrosReceita() {
         const select = document.getElementById('selectCentroCusto');
-        if (!select) return; // Evita erros se o campo não estiver no HTML ainda
+        if (!select) return; 
         try {
-            const response = await fetch('http://localhost:8080/api/centros-custo/filtrar?fluxo=RECEITA', {
+            const response = await fetch(`${API_BASE_URL}/centros-custo/filtrar?fluxo=RECEITA`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -74,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar centros de receita', e); }
     }
 
-    // 4. SALVA O NOVO LANÇAMENTO DE RECEITA (POST VINCULANDO AMBOS OS CAMPOS)
+    // 4. SALVA O NOVO LANÇAMENTO DE RECEITA - CENTRALIZADO
     document.getElementById('formReceber').addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -84,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const contaId = document.getElementById('selectConta').value;
         const categoriaId = document.getElementById('selectCategoria').value;
         
-        // Captura o ID do Centro de Custo/Receita se ele existir na tela
         const selectCentro = document.getElementById('selectCentroCusto');
         const centroCustoId = selectCentro ? selectCentro.value : '';
         
@@ -103,13 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
             categoria: { id: parseInt(categoriaId) }
         };
 
-        // Se houver um Centro de Receita selecionado, anexa no JSON
         if (centroCustoId) {
             payload.centroCusto = { id: parseInt(centroCustoId) };
         }
 
         try {
-            const response = await fetch('http://localhost:8080/api/lancamentos', {
+            const response = await fetch(`${API_BASE_URL}/lancamentos`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -133,11 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error(error); }
     });
 
-    // 5. LISTA AS RECEITAS NA TABELA EXIBINDO CATEGORIA E CENTRO
+    // 5. LISTA AS RECEITAS NA TABELA - CENTRALIZADO
     async function listarLancamentosReceber() {
         const tabela = document.getElementById('tabelaReceber');
         try {
-            const response = await fetch('http://localhost:8080/api/lancamentos', {
+            const response = await fetch(`${API_BASE_URL}/lancamentos`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

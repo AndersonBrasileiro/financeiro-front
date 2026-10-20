@@ -13,7 +13,7 @@ document.getElementById('formLogin').addEventListener('submit', async (event) =>
 
     try {
         // 2. Dispara a requisição HTTP contra o nosso endpoint Java local
-        const response = await fetch('http://localhost:8080/api/auth/login', {
+        const response = await fetch(`${API_BASE_URL}/auth/autenticar`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

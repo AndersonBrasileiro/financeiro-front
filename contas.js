@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Dispara o POST contra a rota de contas protegida por inquilino
-            const response = await fetch('http://localhost:8080/api/contas', {
+            const response = await fetch(`${API_BASE_URL}/contas`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

@@ -9,14 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inicializa a tela buscando todos os dados do Java
     carregarDropdownContas();
     carregarDropdownCategoriasReais();
-    carregarDropdownCentros(); // Ativado no topo!
+    carregarDropdownCentros(); 
     listarLancamentosPagar();
 
-    // 1. CARREGA AS CONTAS DO USUÁRIO NO DROPDOWN
+    // 1. CARREGA AS CONTAS DO USUÁRIO NO DROPDOWN - CENTRALIZADO
     async function carregarDropdownContas() {
         const select = document.getElementById('selectConta');
         try {
-            const response = await fetch('http://localhost:8080/api/contas', {
+            const response = await fetch(`${API_BASE_URL}/contas`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -30,11 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar contas', e); }
     }
 
-        // 2. CORRIGIDO COM TRAVA: Carrega APENAS subcategorias (filhas) do tipo "DESPESA"
+    // 2. CARREGA AS CATEGORIAS FILTRADAS - CENTRALIZADO
     async function carregarDropdownCategoriasReais() {
         const select = document.getElementById('selectCategoria');
         try {
-            const response = await fetch('http://localhost:8080/api/categorias', {
+            const response = await fetch(`${API_BASE_URL}/categorias`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -45,9 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 categorias.forEach(cat => {
                     const valorFluxo = cat.fluxo || cat.tipo || 'DESPESA';
                     
-                    // 🌟 REGRA DE NEGÓCIO: Só exibe se for DESPESA E se possuir uma Categoria Pai (é filha)
                     if (valorFluxo.toString().toUpperCase() === 'DESPESA' && cat.categoriaPai) {
-                        // Exibe o nome de forma limpa: "Aluguel (Habitação)"
                         select.innerHTML += `<option value="${cat.id}">${cat.nome} (${cat.categoriaPai.nome})</option>`;
                     }
                 });
@@ -55,13 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar categorias reais', e); }
     }
 
-
-    // 3. FUNÇÃO FÍSICA: CARREGA OS CENTROS DE CUSTO FILTRADOS POR "DESPESA"
+    // 3. CARREGA OS CENTROS DE CUSTO - CENTRALIZADO
     async function carregarDropdownCentros() {
         const select = document.getElementById('selectCentroCusto');
         if (!select) return;
         try {
-            const response = await fetch('http://localhost:8080/api/centros-custo/filtrar?fluxo=DESPESA', {
+            const response = await fetch(`${API_BASE_URL}/centros-custo/filtrar?fluxo=DESPESA`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -75,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar centros de custo', e); }
     }
 
-    // 4. SALVA A NOVA DESPESA NO BANCO JAVA
+    // 4. SALVA A NOVA DESPESA NO BANCO JAVA - CENTRALIZADO
     document.getElementById('formPagar').addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -105,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/api/lancamentos', {
+            const response = await fetch(`${API_BASE_URL}/lancamentos`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -129,11 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error(error); }
     });
 
-    // 5. LISTA AS DESPESAS NA TABELA
+    // 5. LISTA AS DESPESAS NA TABELA - CENTRALIZADO
     async function listarLancamentosPagar() {
         const tabela = document.getElementById('tabelaPagar');
         try {
-            const response = await fetch('http://localhost:8080/api/lancamentos', {
+            const response = await fetch(`${API_BASE_URL}/lancamentos`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

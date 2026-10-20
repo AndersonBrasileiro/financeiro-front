@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         // 3. REQUISIÇÃO PROTEGIDA MULTI-TENANT: Bate na rota genérica e o Java identifica quem é pelo Token!
-        const response = await fetch('http://localhost:8080/api/dashboard', {
+        const response = await fetch(`${API_BASE_URL}/dashboard`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

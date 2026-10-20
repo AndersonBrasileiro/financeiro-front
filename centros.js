@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     listarCentros();
 
-    // 1. ADICIONAR NOVO CENTRO (POST)
+    // 1. ADICIONAR NOVO CENTRO (POST) - CENTRALIZADO
     document.getElementById('formCentro').addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -19,13 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         alerta.classList.add('d-none');
 
         try {
-            const response = await fetch('http://localhost:8080/api/centros-custo', {
+            const response = await fetch(`${API_BASE_URL}/centros-custo`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                // Enviamos tanto 'fluxo' quanto 'tipo' para garantir compatibilidade com seu modelo Java
                 body: JSON.stringify({
                     nome: nome,
                     fluxo: valorSelecionado,
@@ -38,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alerta.classList.remove('d-none', 'alert-danger');
                 alerta.classList.add('alert-success');
                 document.getElementById('formCentro').reset();
-                listarCentros(); // Recarrega a tabela na hora!
+                listarCentros(); 
             } else {
                 const err = await response.json();
                 alerta.textContent = err.mensagem || 'Erro ao salvar o centro.';
@@ -52,20 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. LISTAR CENTROS ATIVOS (GET CRUZADO USANDO OS SEUS ENDPOINTS FILTRAR)
+    // 2. LISTAR CENTROS ATIVOS (GET) - CENTRALIZADO
     async function listarCentros() {
         const tabela = document.getElementById('tabelaCentros');
         try {
-            tabela.innerHTML = ''; // Limpa a tabela
+            tabela.innerHTML = ''; 
 
-            // Bate no seu endpoint Java pedindo os Custos (DESPESA)
-            const resCustos = await fetch('http://localhost:8080/api/centros-custo/filtrar?fluxo=DESPESA', {
+            // Bate no seu endpoint Java da Render pedindo os Custos (DESPESA)
+            const resCustos = await fetch(`${API_BASE_URL}/centros-custo/filtrar?fluxo=DESPESA`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
-            // Bate no seu endpoint Java pedindo as Receitas (RECEITA)
-            const resReceitas = await fetch('http://localhost:8080/api/centros-custo/filtrar?fluxo=RECEITA', {
+            // Bate no seu endpoint Java da Render pedindo as Receitas (RECEITA)
+            const resReceitas = await fetch(`${API_BASE_URL}/centros-custo/filtrar?fluxo=RECEITA`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -81,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 listaCompleta = listaCompleta.concat(receitas);
             }
 
-            // Se ambas as requisições falharem com 403/500
             if (!resCustos.ok && !resReceitas.ok) {
                 tabela.innerHTML = `<tr><td colspan="3" class="text-center text-danger">Erro de autorização no servidor (403).</td></tr>`;
                 return;
@@ -92,10 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Ordena os itens pelo ID para a tabela ficar bonita e organizada
             listaCompleta.sort((a, b) => a.id - b.id);
 
-            // Renderiza na tela
             listaCompleta.forEach(c => {
                 const valorFluxo = c.fluxo || c.tipo || 'DESPESA';
                 const tipoTexto = (valorFluxo.toString().toUpperCase() === 'RECEITA') ? 'Receita' : 'Custo';
@@ -115,8 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tabela.innerHTML = `<tr><td colspan="3" class="text-center text-danger">Erro ao renderizar a tabela na tela.</td></tr>`;
         }
     }
-
-
 
     document.getElementById('btnSair').addEventListener('click', () => {
         localStorage.removeItem('token_financas');

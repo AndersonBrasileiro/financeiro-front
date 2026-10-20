@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link href="bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="bg-light d-flex align-items-center justify-content-center vh-100">
 
     <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
@@ -30,7 +32,7 @@
                 <label for="senha" class="form-label">Senha</label>
                 <input type="password" id="senha" class="form-control" placeholder="••••••••" required>
             </div>
-            
+
             <!-- Mensagens dinâmicas de erro ou sucesso -->
             <div id="mensagemAlerta" class="alert d-none" role="alert"></div>
 
@@ -38,11 +40,14 @@
         </form>
 
         <div class="text-center mt-3">
-            <p class="small text-muted">Já tem uma conta? <a href="index.html" class="text-decoration-none">Faça login aqui</a></p>
+            <p class="small text-muted">Já tem uma conta? <a href="index.html" class="text-decoration-none">Faça login
+                    aqui</a></p>
         </div>
     </div>
-
+    <!-- Configuração Global da API (Obrigatório vir primeiro) -->
+    <script src="config.js"></script>
     <!-- Script de Inteligência de Registro -->
     <script src="registrar.js"></script>
 </body>
+
 </html>
