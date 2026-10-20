@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Dispara o GET (Equivalente ao Passo G do nosso arquivo de testes HTTP)
-            const response = await fetch('http://localhost:8080/api/contas', {
+            const response = await fetch(`${API_BASE_URL}/contas`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
