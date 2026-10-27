@@ -34,37 +34,37 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar filtro de contas', e); }
     }
 
-    // 2. BUSCA E LISTA AS MOVIMENTAÇÕES NA TABELA
+    // 2. BUSCA E LISTA AS MOVIMENTAÇÕES NA TABELA - ALINHADO COM O SEU JAVA
     async function listarMovimentacoes() {
         const tabela = document.getElementById('tabelaExtrato');
         const contaSelecionadaId = document.getElementById('selectContaFiltro').value;
         
+        // 🌟 REGRA DE NEGÓCIO: Como seu Java exige o ID da conta, alertamos o usuário se ele não escolher uma
+        if (!contaSelecionadaId) {
+            tabela.innerHTML = `<tr><td colspan="5" class="text-center text-warning py-4">⚠️ Por favor, selecione uma Conta Bancária específica para visualizar o extrato.</td></tr>`;
+            return;
+        }
+
         try {
-            // Rota genérica de movimentações do seu Java
-            const response = await fetch(`${API_BASE_URL}/movimentacoes`, {
+            // 🌟 CORRIGIDO: Batendo exatamente na rota exigida pelo seu Controller Java!
+            const response = await fetch(`${API_BASE_URL}/movimentacoes/conta/${contaSelecionadaId}`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
             if (response.ok) {
-                let movimentacoes = await response.json();
+                const movimentacoes = await response.json();
                 tabela.innerHTML = '';
 
-                // Aplica o filtro de conta no frontend caso o usuário selecione uma específica
-                if (contaSelecionadaId) {
-                    movimentacoes = movimentacoes.filter(m => m.conta && m.conta.id == contaSelecionadaId);
-                }
-
                 if (movimentacoes.length === 0) {
-                    tabela.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Nenhuma movimentação encontrada para o filtro selecionado.</td></tr>`;
+                    tabela.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Nenhuma movimentação encontrada para esta conta.</td></tr>`;
                     return;
                 }
 
-                // Ordena por ID decrescente (as mais recentes aparecem primeiro no extrato)
+                // Ordena por ID decrescente (mais recentes primeiro)
                 movimentacoes.sort((a, b) => b.id - a.id);
 
                 movimentacoes.forEach(m => {
-                    // Trata o tipo (ENTRADA / RECEITA vs SAIDA / DESPESA)
                     const tipoOriginal = m.tipoMovimentacao || m.tipo || 'SAIDA';
                     const isEntrada = tipoOriginal.toString().toUpperCase() === 'ENTRADA' || tipoOriginal.toString().toUpperCase() === 'RECEITA';
                     
@@ -79,9 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const linha = document.createElement('tr');
                     linha.innerHTML = `
                         <td>${new Date(dataFormatada).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</td>
-                        <td class="fw-bold text-dark">
-                            ${m.descricao || 'Movimentação Automática por Baixa'}
-                        </td>
+                        <td class="fw-bold text-dark">${m.descricao || 'Movimentação Automática por Baixa'}</td>
                         <td><span class="badge bg-light text-dark border">${contaNome}</span></td>
                         <td><span class="badge ${badgeCor}">${tipoTexto}</span></td>
                         <td class="text-end fw-bold ${valorCor}">${sinal} R$ ${m.valor.toFixed(2)}</td>
@@ -96,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tabela.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Erro de conexão com o backend.</td></tr>`;
         }
     }
+
 
     document.getElementById('btnSair').addEventListener('click', () => {
         localStorage.removeItem('token_financas');
