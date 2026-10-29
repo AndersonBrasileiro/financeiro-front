@@ -35,7 +35,7 @@
                     <div class="col-md-6 col-12 mb-3 mb-md-0">
                         <label for="selectContaFiltro" class="form-label fw-bold small text-muted">Filtrar por Conta Bancária</label>
                         <select id="selectContaFiltro" class="form-select">
-                            <option value="">-- Todas as Contas --</option>
+                            <option value="">-- Selecione a Conta --</option>
                         </select>
                     </div>
                     <div class="col-md-6 col-12 text-md-end">
@@ -52,17 +52,18 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark">
                             <tr>
-                                <th style="width: 15%;">Data Mov.</th>
-                                <th style="width: 45%;">Descrição / Origem</th>
+                                <th style="width: 12%;">Data Mov.</th>
+                                <th style="width: 38%;">Descrição / Origem</th>
                                 <th style="width: 15%;">Conta</th>
                                 <th style="width: 10%;">Tipo</th>
-                                <th style="width: 15%;" class="text-end">Valor</th>
+                                <th style="width: 12%;" class="text-end">Valor</th>
+                                <th style="width: 13%;" class="text-end">Saldo Acum.</th>
                             </tr>
                         </thead>
                         <tbody id="tabelaExtrato">
                             <!-- Injetado via Javascript -->
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">Carregando movimentações...</td>
+                                <td colspan="6" class="text-center text-muted py-4">Carregando movimentações...</td>
                             </tr>
                         </tbody>
                     </table>
