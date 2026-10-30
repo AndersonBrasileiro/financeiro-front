@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const linha = document.createElement('tr');
                     linha.innerHTML = `
                         <td>${new Date(dataFormatada).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</td>
-                        <td class="fw-bold text-dark">${m.descricao || 'Movimentação Automática por Baixa'}</td>
+                        <td class="fw-bold text-dark">${m.historico || 'Movimentação Automática por Baixa'}</td>
                         <td><span class="badge bg-light text-dark border">${contaNome}</span></td>
                         <td><span class="badge ${badgeCor}">${tipoTexto}</span></td>
                         <td class="text-end fw-bold ${valorCor}">${sinal} R$ ${m.valor.toFixed(2)}</td>
