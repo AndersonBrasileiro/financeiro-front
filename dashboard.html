@@ -95,21 +95,84 @@
     <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL (Wrapper fluido) -->
     <div class="content-wrapper">
         <div class="container-fluid">
+            
+            <!-- Título do Painel -->
             <div class="row mb-4">
-                <div class="col">
+                <div class="col-12">
                     <h2 class="fw-bold text-dark">Painel de Controle</h2>
-                    <p class="text-muted">Aqui está o resumo organizacional e financeiro das suas contas online.</p>
+                    <p class="text-muted">Resumo financeiro em tempo real e projeções consolidadas do sistema.</p>
                 </div>
             </div>
             
-            <!-- (Os seus cards de saldo e tabelas do Dashboard continuam rendrizando normalmente aqui dentro) -->
-            
+            <!-- 📊 CARDS DE RESUMO PRESERVADOS (Fluidos para Celular e Computador) -->
+            <div class="row g-3 mb-4">
+                <!-- Saldo Atual Consolidado -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4">
+                            <span class="text-muted small text-uppercase fw-bold">Saldo Disponível</span>
+                            <h3 id="txtSaldoAtual" class="fw-bold text-primary mt-2">R$ 0,00</h3>
+                            <p class="text-muted small mb-0">Total disponível em contas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contas a Pagar em Aberto -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4">
+                            <span class="text-muted small text-uppercase fw-bold">A Pagar (Em Aberto)</span>
+                            <h3 id="txtTotalPagar" class="fw-bold text-danger mt-2">R$ 0,00</h3>
+                            <p class="text-muted small mb-0">Compromissos pendentes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contas a Receber em Aberto -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4">
+                            <span class="text-muted small text-uppercase fw-bold">A Receber (Em Aberto)</span>
+                            <h3 id="txtTotalReceber" class="fw-bold text-success mt-2">R$ 0,00</h3>
+                            <p class="text-muted small mb-0">Previsão de entradas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saldo Projetado -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 bg-dark text-white">
+                        <div class="card-body p-4">
+                            <span class="text-info small text-uppercase fw-bold">Saldo Projetado</span>
+                            <h3 id="txtSaldoProjetado" class="fw-bold text-info mt-2">R$ 0,00</h3>
+                            <p class="text-light-50 small mb-0">Fluxo estimado consolidado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Espaço reservado para as tabelas ou resumos adicionais que você tinha -->
+            <div id="containerResumosAdicionais"></div>
+
         </div>
     </div>
 
+    <!-- Scripts Globais e Bootstrap Bundle -->
     <script src="config.js"></script>
     <script src="https://jsdelivr.net"></script>
+    
+    <!-- 📋 RESTAURAÇÃO DA INTELIGÊNCIA DO SEU DASHBOARD.JS ANTERIOR -->
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token_financas');
+            if (!token) { window.location.href = 'index.html'; return; }
+
+            // Chame aqui as funções do seu arquivo dashboard.js original para ler a API da nuvem
+            if (typeof carregarDadosDashboard === 'function') {
+                carregarDadosDashboard();
+            }
+        });
+
         const logout = () => {
             localStorage.removeItem('token_financas');
             window.location.href = 'index.html';
@@ -117,5 +180,8 @@
         document.getElementById('btnSair')?.addEventListener('click', logout);
         document.getElementById('btnSairCelular')?.addEventListener('click', logout);
     </script>
+    
+    <!-- Se o seu script de carregar saldos estava em um arquivo separado, ele continua importado aqui: -->
+    <script src="dashboard.js"></script>
 </body>
 </html>
