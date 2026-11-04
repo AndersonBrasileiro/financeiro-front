@@ -92,21 +92,9 @@
         </div>
     </div>
 
-    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL (Wrapper fluido) -->
-    <div class="content-wrapper">
-        <div class="container-fluid">
-            
-            <!-- Título do Painel -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="fw-bold text-dark">Painel de Controle</h2>
-                    <p class="text-muted">Resumo financeiro em tempo real e projeções consolidadas do sistema.</p>
-                </div>
-            </div>
-            
-            <!-- 📊 CARDS DE RESUMO PRESERVADOS (Fluidos para Celular e Computador) -->
+                <!-- 📊 CARDS DE RESUMO PRESERVADOS (Fluidos para Celular e Computador) -->
             <div class="row g-3 mb-4">
-                <!-- Saldo Atual Consolidado -->
+                <!-- 1. Saldo Atual Consolidado -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card border-0 shadow-sm h-100 bg-white">
                         <div class="card-body p-4">
@@ -117,18 +105,7 @@
                     </div>
                 </div>
 
-                <!-- Contas a Pagar em Aberto -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100 bg-white">
-                        <div class="card-body p-4">
-                            <span class="text-muted small text-uppercase fw-bold">A Pagar (Em Aberto)</span>
-                            <h3 id="txtTotalPagar" class="fw-bold text-danger mt-2">R$ 0,00</h3>
-                            <p class="text-muted small mb-0">Compromissos pendentes</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Contas a Receber em Aberto -->
+                <!-- 2. 🌟 MOVIDO PARA CÁ: Contas a Receber em Aberto (Entradas) -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card border-0 shadow-sm h-100 bg-white">
                         <div class="card-body p-4">
@@ -139,7 +116,18 @@
                     </div>
                 </div>
 
-                <!-- Saldo Projetado -->
+                <!-- 3. Contas a Pagar em Aberto (Saídas) -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4">
+                            <span class="text-muted small text-uppercase fw-bold">A Pagar (Em Aberto)</span>
+                            <h3 id="txtTotalPagar" class="fw-bold text-danger mt-2">R$ 0,00</h3>
+                            <p class="text-muted small mb-0">Compromissos pendentes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Saldo Projetado -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card border-0 shadow-sm h-100 bg-dark text-white">
                         <div class="card-body p-4">
@@ -151,11 +139,6 @@
                 </div>
             </div>
 
-            <!-- Espaço reservado para as tabelas ou resumos adicionais que você tinha -->
-            <div id="containerResumosAdicionais"></div>
-
-        </div>
-    </div>
 
     <!-- Scripts Globais e Bootstrap Bundle -->
     <script src="config.js"></script>
