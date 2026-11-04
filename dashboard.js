@@ -22,16 +22,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (response.ok) {
             const dados = await response.json();
             
-            // Rastreador preventivo para imprimir os dados no console
-            console.log("Dados recebidos do Java com sucesso:", dados);
+            // 🌟 CORREÇÃO CIRÚRGICA: Ajustando a captura para anular a inversão de chaves do JSON
+            const saldoDisponivel = dados.saldoDisponivel || dados.saldo_disponivel || dados.saldoAtual || dados.saldo || 0;
+            
+            // Invertemos a leitura das propriedades para bater com o valor real enviado pelo Java
+            const pagar = dados.totalContasReceberEmAberto ?? dados.total_contas_receber_em_aberto ?? 0;
+            const receber = dados.totalContasPagarEmAberto ?? dados.total_contas_pagar_em_aberto ?? 0;
+            
+            // 🧮 CORREÇÃO DA MATEMÁTICA NO FRONT: Saldo Disponível + Receber - Pagar
+            const projetado = saldoDisponivel + receber - pagar;
 
-            // Tenta mapear pelas nomes longos ou curtos do DTO de forma 100% segura
-            const saldoDisponivel = dados.saldoDisponivel || dados.saldoAtual || dados.saldo || 0;
-            const receber = dados.totalContasReceberEmAberto ?? dados.totalReceber ?? dados.receber ?? 0;
-            const pagar = dados.totalContasPagarEmAberto ?? dados.totalPagar ?? dados.pagar ?? 0;
-            const projetado = dados.saldoProjetadoFuturo ?? dados.saldoProjetado ?? dados.projetado ?? 0;
-
-            // 4. ATUALIZAÇÃO DINÂMICA SINCROIZADA: Substitui os valores nas tags HTML corretas!
+            // 4. ATUALIZAÇÃO DINÂMICA SIMULTÂNEA: Injeta nos cards corretos do HTML!
             if(document.getElementById('txtSaldoAtual')) document.getElementById('txtSaldoAtual').textContent = formatarMoeda(saldoDisponivel);
             if(document.getElementById('txtTotalReceber')) document.getElementById('txtTotalReceber').textContent = formatarMoeda(receber);
             if(document.getElementById('txtTotalPagar')) document.getElementById('txtTotalPagar').textContent = formatarMoeda(pagar);
