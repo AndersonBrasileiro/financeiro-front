@@ -9,7 +9,7 @@
 </head>
 <body class="bg-light">
 
-    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (Aparece apenas em telas pequenas) -->
+    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (Responsivo) -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-lg-none">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="dashboard.html">🚀 Finanças ERP</a>
@@ -18,41 +18,69 @@
             </button>
             <div class="collapse navbar-collapse" id="menuCelular">
                 <div class="navbar-nav pt-2">
-                    <div class="text-muted small px-3 py-1 text-uppercase">Operações</div>
-                    <a class="nav-link" href="pagar.html">📄 A Pagar</a>
-                    <a class="nav-link" href="receber.html">💰 A Receber</a>
+                    <!-- Bloco Financeiro -->
+                    <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">💰 Financeiro</div>
+                    <a class="nav-link" href="pagar.html">📄 Contas a Pagar</a>
+                    <a class="nav-link" href="receber.html">💵 Contas a Receber</a>
+                    <a class="nav-link" href="transferencia.html">💸 Transferências</a>
                     <a class="nav-link" href="extrato.html">📋 Extrato Interno</a>
-                    <a class="nav-link" href="transferencia.html">💸 Transferência</a>
-                    <hr class="dropdown-divider bg-light">
-                    <button id="btnSairCelular" class="btn btn-danger btn-sm m-3">Sair</button>
+                    
+                    <hr class="dropdown-divider bg-secondary my-2">
+                    
+                    <!-- Bloco Cadastros -->
+                    <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">⚙️ Cadastros</div>
+                    <a class="nav-link" href="contas.html">🏦 Contas Bancárias</a>
+                    <a class="nav-link" href="centros-custos.html">🏢 Centros de Custo</a>
+                    <a class="nav-link" href="categorias.html">🏷️ Categorias</a>
+                    
+                    <hr class="dropdown-divider bg-light my-3">
+                    <button id="btnSairCelular" class="btn btn-danger btn-sm m-3">Sair do Sistema</button>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-    <!-- 💻 BARRA LATERAL ESTILO SUPABASE (Aparece apenas em computadores) -->
+    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE (Computador) -->
     <div class="sidebar-supabase">
         <div class="py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem;">
             🚀 <span class="ms-2">ERP</span>
         </div>
         <div class="pt-3">
-            <!-- Grupo de Operações Agrupadas -->
-            <div class="sidebar-heading">Operações</div>
             
+            <!-- 🌐 MENU 1: FINANCEIRO -->
+            <div class="sidebar-heading">💰 Financeiro</div>
             <a href="pagar.html" class="nav-sidebar-link">
                 <span class="menu-icon">📄</span>
                 <span class="menu-text">Contas a Pagar</span>
             </a>
             <a href="receber.html" class="nav-sidebar-link">
-                <span class="menu-icon">💰</span>
+                <span class="menu-icon">💵</span>
                 <span class="menu-text">Contas a Receber</span>
+            </a>
+            <a href="transferencia.html" class="nav-sidebar-link">
+                <span class="menu-icon">💸</span>
+                <span class="menu-text">Transferências</span>
             </a>
             <a href="extrato.html" class="nav-sidebar-link">
                 <span class="menu-icon">📋</span>
                 <span class="menu-text">Extrato Interno</span>
             </a>
-            <a href="transferencia.html" class="nav-sidebar-link">
-                <span class="menu-icon">💸</span>
-                <span class="menu-text">Transferências</span>
+            
+            <div class="my-3"></div>
+
+            <!-- 🌐 MENU 2: CADASTROS -->
+            <div class="sidebar-heading">⚙️ Cadastros</div>
+            <a href="contas.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏦</span>
+                <span class="menu-text">Contas Bancárias</span>
+            </a>
+            <a href="centros-custos.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏢</span>
+                <span class="menu-text">Centros de Custo</span>
+            </a>
+            <a href="categorias.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏷️</span>
+                <span class="menu-text">Categorias</span>
             </a>
             
             <div class="border-top border-secondary mt-4 pt-3">
@@ -67,24 +95,21 @@
     <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL (Wrapper fluido) -->
     <div class="content-wrapper">
         <div class="container-fluid">
-            <!-- Mantenha aqui dentro todo o miolo do seu dashboard atual (Cards de saldo, tabelas, etc.) -->
             <div class="row mb-4">
                 <div class="col">
                     <h2 class="fw-bold text-dark">Painel de Controle</h2>
-                    <p class="text-muted">Bem-vindo de volta! Aqui está o resumo das suas finanças online.</p>
+                    <p class="text-muted">Aqui está o resumo organizacional e financeiro das suas contas online.</p>
                 </div>
             </div>
             
-            <!-- (Cole aqui o restante dos seus cards de saldo anteriores para não perdê-los) -->
+            <!-- (Os seus cards de saldo e tabelas do Dashboard continuam rendrizando normalmente aqui dentro) -->
             
         </div>
     </div>
 
     <script src="config.js"></script>
-    <!-- Adicionado o JS do Bootstrap para fazer o menu hambúrguer funcionar no celular -->
     <script src="https://jsdelivr.net"></script>
     <script>
-        // Vincula a função de sair para os dois botões (computador e celular)
         const logout = () => {
             localStorage.removeItem('token_financas');
             window.location.href = 'index.html';
