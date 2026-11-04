@@ -1,96 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finanças API - Dashboard</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="bootstrap.min.css" rel="stylesheet">
+    <title>Dashboard - ERP Finanças</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body class="bg-light">
 
-    <!-- Barra de Navegação Superior com Menu Configurações Dropdown -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-        <div class="container">
-            <span class="navbar-brand h1 mb-0 fw-bold">🚀 Finanças API</span>
-
-            <div class="d-flex align-items-center gap-3">
-                <a href="dashboard.html" class="btn btn-outline-light btn-sm fw-bold">Dashboard</a>
-                <a href="pagar.html" class="btn btn-outline-light btn-sm fw-bold">Contas a Pagar</a>
-                <a href="receber.html" class="btn btn-outline-light btn-sm fw-bold">Contas a Receber</a>
-
-                <!-- MENU CONFIGURAÇÕES DROPDOWN -->
-                <div class="dropdown">
-                    <button class="btn btn-outline-light btn-sm dropdown-toggle fw-bold" type="button" id="menuConfig"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        ⚙️ Configurações
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="menuConfig">
-                        <li><a class="dropdown-item fw-bold text-secondary" href="contas.html">📂 Cadastrar Contas
-                                Bancárias</a></li>
-                        <li><a class="dropdown-item fw-bold text-secondary" href="centros.html">📂 Cadastrar Centros de
-                                Custo</a></li>
-                        <li><a class="dropdown-item fw-bold text-secondary" href="categorias.html">📂 Cadastrar
-                                Categorias</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><span class="dropdown-item-text text-muted small">Mais cadastros em breve...</span></li>
-                    </ul>
+    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (Aparece apenas em telas pequenas) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-lg-none">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="dashboard.html">🚀 Finanças ERP</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuCelular">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menuCelular">
+                <div class="navbar-nav pt-2">
+                    <div class="text-muted small px-3 py-1 text-uppercase">Operações</div>
+                    <a class="nav-link" href="pagar.html">📄 A Pagar</a>
+                    <a class="nav-link" href="receber.html">💰 A Receber</a>
+                    <a class="nav-link" href="extrato.html">📋 Extrato Interno</a>
+                    <a class="nav-link" href="transferencia.html">💸 Transferência</a>
+                    <hr class="dropdown-divider bg-light">
+                    <button id="btnSairCelular" class="btn btn-danger btn-sm m-3">Sair</button>
                 </div>
-
-                <button id="btnSair" class="btn btn-danger btn-sm fw-bold">Sair</button>
             </div>
+        </nav>
+
+    <!-- 💻 BARRA LATERAL ESTILO SUPABASE (Aparece apenas em computadores) -->
+    <div class="sidebar-supabase">
+        <div class="py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem;">
+            🚀 <span class="ms-2">ERP</span>
         </div>
-    </nav>
-
-
-
-    <!-- Conteúdo Principal -->
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col">
-                <h3 class="fw-bold text-secondary">Resumo do Fluxo de Caixa Futuro</h3>
-                <p class="text-muted">Indicadores baseados estritamente em lançamentos em aberto</p>
-            </div>
-        </div>
-
-        <!-- Linha dos Cards de Saldos do Nosso DTO -->
-        <div class="row g-3">
-            <!-- Card 1: Receitas em Aberto -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 bg-white">
-                    <h6 class="text-success fw-bold uppercase small">Total a Receber</h6>
-                    <h2 id="totalReceber" class="fw-bold mt-2 text-dark">R$ 0,00</h2>
-                </div>
-            </div>
-
-            <!-- Card 2: Despesas em Aberto -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 bg-white">
-                    <h6 class="text-danger fw-bold uppercase small">Total a Pagar</h6>
-                    <h2 id="totalPagar" class="fw-bold mt-2 text-dark">R$ 0,00</h2>
-                </div>
-            </div>
-
-            <!-- Card 3: Saldo Projetado -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 bg-primary text-white">
-                    <h6 class="text-white-50 fw-bold uppercase small">Saldo Projetado Futuro</h6>
-                    <h2 id="saldoProjetado" class="fw-bold mt-2">R$ 0,00</h2>
-                </div>
+        <div class="pt-3">
+            <!-- Grupo de Operações Agrupadas -->
+            <div class="sidebar-heading">Operações</div>
+            
+            <a href="pagar.html" class="nav-sidebar-link">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Contas a Pagar</span>
+            </a>
+            <a href="receber.html" class="nav-sidebar-link">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Contas a Receber</span>
+            </a>
+            <a href="extrato.html" class="nav-sidebar-link">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Extrato Interno</span>
+            </a>
+            <a href="transferencia.html" class="nav-sidebar-link">
+                <span class="menu-icon">💸</span>
+                <span class="menu-text">Transferências</span>
+            </a>
+            
+            <div class="border-top border-secondary mt-4 pt-3">
+                <a href="#" id="btnSair" class="nav-sidebar-link text-danger">
+                    <span class="menu-icon">🚪</span>
+                    <span class="menu-text">Sair do Sistema</span>
+                </a>
             </div>
         </div>
     </div>
-    <!-- Configuração Global da API (Obrigatório vir primeiro) -->
-    <script src="config.js"></script>
-    <!-- Script de Inteligência do Dashboard -->
-    <script src="dashboard.js"></script>
-    <!-- Script do Bootstrap local para fazer o Dropdown abrir -->
-    <script src="bootstrap.bundle.min.js"></script>
-</body>
 
+    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL (Wrapper fluido) -->
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <!-- Mantenha aqui dentro todo o miolo do seu dashboard atual (Cards de saldo, tabelas, etc.) -->
+            <div class="row mb-4">
+                <div class="col">
+                    <h2 class="fw-bold text-dark">Painel de Controle</h2>
+                    <p class="text-muted">Bem-vindo de volta! Aqui está o resumo das suas finanças online.</p>
+                </div>
+            </div>
+            
+            <!-- (Cole aqui o restante dos seus cards de saldo anteriores para não perdê-los) -->
+            
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <!-- Adicionado o JS do Bootstrap para fazer o menu hambúrguer funcionar no celular -->
+    <script src="https://jsdelivr.net"></script>
+    <script>
+        // Vincula a função de sair para os dois botões (computador e celular)
+        const logout = () => {
+            localStorage.removeItem('token_financas');
+            window.location.href = 'index.html';
+        };
+        document.getElementById('btnSair')?.addEventListener('click', logout);
+        document.getElementById('btnSairCelular')?.addEventListener('click', logout);
+    </script>
+</body>
 </html>

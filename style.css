@@ -28,3 +28,92 @@ body {
 .form-control:focus {
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
 }
+
+/* ==========================================================================
+   📊 MENU LATERAL RETRÁTIL - ESTILO SUPABASE (RESPONSIVO)
+   ========================================================================== */
+
+/* Estrutura para telas grandes (Computador) */
+@media (min-width: 992px) {
+    body {
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    
+    /* Barra lateral colapsada por padrão */
+    .sidebar-supabase {
+        width: 70px;
+        min-height: 100vh;
+        background-color: #1e1e1e;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1030;
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 1px solid #2e2e2e;
+    }
+    
+    /* Expansão suave ao passar o mouse (Hover) */
+    .sidebar-supabase:hover {
+        width: 260px;
+    }
+    
+    /* Ajuste da área de conteúdo principal para não sumir debaixo do menu */
+    .content-wrapper {
+        flex: 1;
+        margin-left: 70px;
+        padding: 30px;
+        transition: margin-left 0.3s;
+    }
+    
+    /* Esconde títulos de seções quando o menu estiver fechado */
+    .sidebar-heading {
+        opacity: 0;
+        transition: opacity 0.2s;
+        padding: 10px 20px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1rem;
+        color: #6c757d;
+    }
+    
+    .sidebar-supabase:hover .sidebar-heading {
+        opacity: 1;
+    }
+}
+
+/* Elementos internos dos links do menu */
+.nav-sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 22px;
+    color: #b3b3b3;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.nav-sidebar-link:hover {
+    background-color: #2d2d2d;
+    color: #3ecf8e; /* Verde assinatura estilo Supabase */
+}
+
+.nav-sidebar-link .menu-icon {
+    font-size: 1.25rem;
+    margin-right: 25px;
+    min-width: 25px;
+    text-align: center;
+}
+
+/* Estrutura para telas pequenas (Celular) */
+@media (max-width: 991.98px) {
+    .sidebar-supabase {
+        display: none; /* Some com a barra lateral no celular */
+    }
+    .content-wrapper {
+        padding: 15px;
+    }
+}
+
