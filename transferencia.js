@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function exibirAlerta(mensagem, tipo) {
         const alerta = document.getElementById('alertaFeedback');
         alerta.className = `alert alert-${tipo}`;
-        alerta.innerText = mensaje;
+        alerta.innerText = mensagem;
         alerta.classList.remove('d-none');
         
         // Rola a página suavemente para o topo do formulário para ver o aviso no celular
