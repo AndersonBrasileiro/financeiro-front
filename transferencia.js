@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 2. DISPARA O POST DE TRANSFERÊNCIA PARA O BACKEND JAVA
-    async function ejecutarTransferencia() {
+    async function executarTransferencia() {
         const contaOrigemId = document.getElementById('selectContaOrigem').value;
         const contaDestinoId = document.getElementById('selectContaDestino').value;
         const valor = parseFloat(document.getElementById('inputValor').value);
