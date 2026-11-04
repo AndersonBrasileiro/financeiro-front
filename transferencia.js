@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. DISPARA O POST DE TRANSFERÊNCIA PARA O BACKEND JAVA
+        // 2. DISPARA O POST DE TRANSFERÊNCIA PARA O BACKEND JAVA
     async function executarTransferencia() {
         const contaOrigemId = document.getElementById('selectContaOrigem').value;
         const contaDestinoId = document.getElementById('selectContaDestino').value;
@@ -62,23 +62,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = document.getElementById('inputData').value;
         const observacao = document.getElementById('inputObservacao').value;
 
-        // Validação comercial básica: Impede transferir para a mesma conta
+        // Validação comercial básica
         if (contaOrigemId === contaDestinoId) {
             exibirAlerta('⚠️ A conta de destino não pode ser igual à conta de origem.', 'warning');
             return;
         }
 
-        // Monta o payload JSON padrão esperado pelo backend
+        // 🌟 SINTONIZADO COM O SEU MODEL JAVA: Aninhando os IDs dentro de sub-objetos de Conta
         const dadosTransferencia = {
-            contaOrigemId: parseInt(contaOrigemId),
-            contaDestinoId: parseInt(contaDestinoId),
-            valor: valor,
-            data: data,
-            observacao: observacao
+            descricao: observacao || "Transferência entre Contas", // Mapeado para 'descricao' no Java
+            valor: valor,                                         // Mapeado para 'valor' no Java
+            dataTransferencia: data,                              // Mapeado para 'dataTransferencia' no Java
+            contaOrigem: { id: parseInt(contaOrigemId) },         // Mapeado para a entidade 'contaOrigem'
+            contaDestino: { id: parseInt(contaDestinoId) }        // Mapeado para a entidade 'contaDestino'
         };
 
         try {
-            // Rota comercial padrão de transferências do sistema
             const response = await fetch(`${API_BASE_URL}/transferencias`, {
                 method: 'POST',
                 headers: {
@@ -91,9 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 exibirAlerta('✅ Transferência executada com sucesso absoluto!', 'success');
                 document.getElementById('formTransferencia').reset();
-                // Define a data atual novamente após limpar o formulário
                 document.getElementById('inputData').value = new Date().toISOString().split('T')[0];
-                // Recarrega as contas para atualizar os saldos exibidos nos seletores
                 carregarContasNosSelects();
             } else {
                 const erroTexto = await response.text();
@@ -104,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             exibirAlerta('Erro de conexão com o backend.', 'danger');
         }
     }
+
 
     // FUNÇÃO AUXILIAR: Exibe alertas dinâmicos na tela
     function exibirAlerta(mensagem, tipo) {
