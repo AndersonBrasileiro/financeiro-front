@@ -9,71 +9,168 @@
 </head>
 <body class="bg-light">
 
-    <!-- Menu de Navegação Superior -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (Responsivo) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-lg-none">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="dashboard.html">🚀 Finanças ERP</a>
-            <div class="d-flex">
-                <a href="dashboard.html" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
-                <button id="btnSair" class="btn btn-danger btn-sm">Sair</button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuCelular">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menuCelular">
+                <div class="navbar-nav pt-2">
+                    <!-- Bloco Financeiro -->
+                    <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">💰 Financeiro</div>
+                    <a class="nav-link" href="dashboard.html">📊 Visão Geral</a>
+                    <a class="nav-link" href="pagar.html">📄 Contas a Pagar</a>
+                    <a class="nav-link" href="receber.html">💵 Contas a Receber</a>
+                    <a class="nav-link" href="transferencia.html">💸 Transferências</a>
+                    <a class="nav-link" href="extrato.html">📋 Extrato Interno</a>
+                    
+                    <hr class="dropdown-divider bg-secondary my-2">
+                    
+                    <!-- Bloco Cadastros -->
+                    <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">⚙️ Cadastros</div>
+                    <a class="nav-link" href="contas.html">🏦 Contas Bancárias</a>
+                    <a class="nav-link" href="centros-custos.html">🏢 Centros de Custo</a>
+                    <a class="nav-link" href="categorias.html">🏷️ Categorias</a>
+                    
+                    <hr class="dropdown-divider bg-light my-3">
+                    <button id="btnSairCelular" class="btn btn-danger btn-sm m-3">Sair do Sistema</button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container mb-5">
-        <div class="row mb-3">
-            <div class="col">
-                <h2 class="fw-bold text-dark">📋 Extrato Interno de Movimentações</h2>
-                <p class="text-muted">Histórico consolidado de todas as entradas e saídas geradas por baixas.</p>
-            </div>
-        </div>
+    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE (Computador) -->
+    <div class="sidebar-supabase">
+        <!-- Título/Logo do Sistema Clicável -->
+        <a href="dashboard.html" class="text-decoration-none d-block py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem; transition: background 0.2s;">
+            🚀 <span class="ms-2">ERP</span>
+        </a>
+        <div class="pt-3">
+            <!-- 🌐 MENU 1: FINANCEIRO -->
+            <div class="sidebar-heading">💰 Financeiro</div>
+            <a href="dashboard.html" class="nav-sidebar-link">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Visão Geral / Dashboard</span>
+            </a>
+            <a href="pagar.html" class="nav-sidebar-link">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Contas a Pagar</span>
+            </a>
+            <a href="receber.html" class="nav-sidebar-link">
+                <span class="menu-icon">💵</span>
+                <span class="menu-text">Contas a Receber</span>
+            </a>
+            <a href="transferencia.html" class="nav-sidebar-link">
+                <span class="menu-icon">💸</span>
+                <span class="menu-text">Transferências</span>
+            </a>
+            <a href="extrato.html" class="nav-sidebar-link">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Extrato Interno</span>
+            </a>
+            
+            <div class="my-3"></div>
 
-        <!-- Painel de Filtro -->
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-body">
-                <div class="row align-items-end">
-                    <div class="col-md-6 col-12 mb-3 mb-md-0">
-                        <label for="selectContaFiltro" class="form-label fw-bold small text-muted">Filtrar por Conta Bancária</label>
-                        <select id="selectContaFiltro" class="form-select">
-                            <option value="">-- Selecione a Conta --</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 col-12 text-md-end">
-                        <button id="btnFiltrar" class="btn btn-primary px-4">Filtrar Histórico</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabela de Extrato -->
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th style="width: 12%;">Data Mov.</th>
-                                <th style="width: 38%;">Descrição / Origem</th>
-                                <th style="width: 15%;">Conta</th>
-                                <th style="width: 10%;">Tipo</th>
-                                <th style="width: 12%;" class="text-end">Valor</th>
-                                <th style="width: 13%;" class="text-end">Saldo Acum.</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelaExtrato">
-                            <!-- Injetado via Javascript -->
-                            <tr>
-                                <td colspan="6" class="text-center text-muted py-4">Carregando movimentações...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- 🌐 MENU 2: CADASTROS -->
+            <div class="sidebar-heading">⚙️ Cadastros</div>
+            <a href="contas.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏦</span>
+                <span class="menu-text">Contas Bancárias</span>
+            </a>
+            <a href="centros-custos.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏢</span>
+                <span class="menu-text">Centros de Custo</span>
+            </a>
+            <a href="categorias.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏷️</span>
+                <span class="menu-text">Categorias</span>
+            </a>
+            
+            <div class="border-top border-secondary mt-4 pt-3">
+                <a href="#" id="btnSair" class="nav-sidebar-link text-danger">
+                    <span class="menu-icon">🚪</span>
+                    <span class="menu-text">Sair do Sistema</span>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Scripts de Configuração e Controle (Ordem hierárquica obrigatória) -->
+    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL -->
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row mb-3">
+                <div class="col">
+                    <h2 class="fw-bold text-dark">📋 Extrato Interno de Movimentações</h2>
+                    <p class="text-muted">Histórico consolidado de todas as entradas e saídas geradas por baixas.</p>
+                </div>
+            </div>
+
+            <!-- Painel de Filtro -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <div class="row align-items-end">
+                        <div class="col-md-6 col-12 mb-3 mb-md-0">
+                            <label for="selectContaFiltro" class="form-label fw-bold small text-muted">Filtrar por Conta Bancária</label>
+                            <select id="selectContaFiltro" class="form-select">
+                                <option value="">-- Selecione a Conta --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 col-12 text-md-end">
+                            <button id="btnFiltrar" class="btn btn-primary px-4">Filtrar Histórico</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Tabela de Extrato -->
+            <div class="card shadow-sm border-0 mb-5">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 12%;">Data Mov.</th>
+                                    <th style="width: 38%;">Descrição / Origem</th>
+                                    <th style="width: 15%;">Conta</th>
+                                    <th style="width: 10%;">Tipo</th>
+                                    <th style="width: 12%;" class="text-end">Valor</th>
+                                    <th style="width: 13%;" class="text-end">Saldo Acum.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaExtrato">
+                                <!-- Injetado via Javascript -->
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">Carregando movimentações...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- Fecha o container-fluid -->
+    </div> <!-- Fecha o content-wrapper -->
+
+    <!-- Scripts de Configuração e Controle -->
     <script src="config.js"></script>
+    <script>
+        // Isolamento de Logout independente para evitar travar o arquivo extrato.js
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token_financas');
+            if (!token) { window.location.href = 'index.html'; return; }
+
+            const efetuarLogout = (e) => {
+                if(e) e.preventDefault();
+                localStorage.removeItem('token_financas');
+                window.location.href = 'index.html';
+            };
+
+            document.getElementById('btnSair')?.addEventListener('click', efetuarLogout);
+            document.getElementById('btnSairCelular')?.addEventListener('click', efetuarLogout);
+        });
+    </script>
     <script src="extrato.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
 </body>
 </html>
