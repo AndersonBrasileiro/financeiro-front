@@ -73,7 +73,7 @@ body {
     .sidebar-heading {
         opacity: 0;
         transition: opacity 0.2s;
-        padding: 10px 20px;
+        padding: 6px 20px; /* ⬅️ Otimizado de 10px para 6px para economizar altura */
         font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.1rem;
@@ -89,7 +89,7 @@ body {
 .nav-sidebar-link {
     display: flex;
     align-items: center;
-    padding: 12px 22px;
+    padding: 8px 20px; /* 🌟 COMPACTADO: Reduzido de 12px 22px para economizar espaço vertical */
     color: #b3b3b3;
     text-decoration: none;
     transition: all 0.2s;
@@ -101,10 +101,16 @@ body {
 }
 
 .nav-sidebar-link .menu-icon {
-    font-size: 1.25rem;
-    margin-right: 25px;
+    font-size: 1.15rem; /* 🌟 COMPACTADO: Levemente menor para um design mais limpo */
+    margin-right: 15px; /* 🌟 COMPACTADO: Aproxima o texto do ícone reduzindo espaço morto */
     min-width: 25px;
     text-align: center;
+}
+
+/* Reduz a distância de margem do bloco vazio entre os dois menus */
+.my-3 {
+    margin-top: 0.4rem !important;
+    margin-bottom: 0.4rem !important;
 }
 
 /* Estrutura para telas pequenas (Celular) */
@@ -116,4 +122,3 @@ body {
         padding: 15px;
     }
 }
-
