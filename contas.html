@@ -5,123 +5,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finanças API - Gestão de Contas</title>
-    <!-- Bootstrap 5 CSS Local -->
     <link href="bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-light">
 
-    <!-- Barra de Navegação Superior com Menu Configurações Dropdown -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-        <div class="container">
-            <span class="navbar-brand h1 mb-0 fw-bold">🚀 Finanças API</span>
-
-            <div class="d-flex align-items-center gap-3">
-                <a href="dashboard.html" class="btn btn-outline-light btn-sm fw-bold">Dashboard</a>
-                <a href="pagar.html" class="btn btn-outline-light btn-sm fw-bold">Contas a Pagar</a>
-                <a href="receber.html" class="btn btn-outline-light btn-sm fw-bold">Contas a Receber</a>
-
-                <!-- MENU CONFIGURAÇÕES DROPDOWN -->
-                <div class="dropdown">
-                    <button class="btn btn-outline-light btn-sm dropdown-toggle fw-bold" type="button" id="menuConfig"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        ⚙️ Configurações
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="menuConfig">
-                        <li><a class="dropdown-item fw-bold text-secondary" href="contas.html">📂 Cadastrar Contas
-                                Bancárias</a></li>
-                        <li><a class="dropdown-item fw-bold text-secondary" href="centros.html">📂 Cadastrar Centros de
-                                Custo</a></li>
-                        <li><a class="dropdown-item fw-bold text-secondary" href="categorias.html">📂 Cadastrar
-                                Categorias</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><span class="dropdown-item-text text-muted small">Mais cadastros em breve...</span></li>
-                    </ul>
+    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (Responsivo) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-lg-none">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="dashboard.html">🚀 Finanças ERP</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuCellular">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menuCellular">
+                <div class="navbar-nav pt-2">
+                    <!-- Bloco Financeiro -->
+                    <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">💰 Financeiro</div>
+                    <a class="nav-link" href="dashboard.html">📊 Visão Geral</a>
+                    <a class="nav-link" href="pagar.html">📄 Contas a Pagar</a>
+                    <a class="nav-link" href="receber.html">💵 Contas a Receber</a>
+                    <a class="nav-link" href="transferencia.html">💸 Transferências</a>
+                    <a class="nav-link" href="extrato.html">📋 Extrato Interno</a>
+                    
+                    <hr class="dropdown-divider bg-secondary my-2">
+                    
+                    <!-- Bloco Cadastros -->
+                    <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">⚙️ Cadastros</div>
+                    <a class="nav-link" href="contas.html">🏦 Contas Bancárias</a>
+                    <a class="nav-link" href="centros-custos.html">🏢 Centros de Custo</a>
+                    <a class="nav-link" href="categorias.html">🏷️ Categorias</a>
+                    
+                    <hr class="dropdown-divider bg-light my-3">
+                    <button id="btnSairCelular" class="btn btn-danger btn-sm m-3">Sair do Sistema</button>
                 </div>
-
-                <button id="btnSair" class="btn btn-danger btn-sm fw-bold">Sair</button>
             </div>
         </div>
     </nav>
 
+    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE (Computador) -->
+    <div class="sidebar-supabase">
+        <a href="dashboard.html" class="text-decoration-none d-block py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem; transition: background 0.2s;">
+            🚀 <span class="ms-2">ERP</span>
+        </a>
+        <div class="pt-3">
+            <!-- 🌐 MENU 1: FINANCEIRO -->
+            <div class="sidebar-heading">💰 Financeiro</div>
+            <a href="dashboard.html" class="nav-sidebar-link">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Visão Geral / Dashboard</span>
+            </a>
+            <a href="pagar.html" class="nav-sidebar-link">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Contas a Pagar</span>
+            </a>
+            <a href="receber.html" class="nav-sidebar-link">
+                <span class="menu-icon">💵</span>
+                <span class="menu-text">Contas a Receber</span>
+            </a>
+            <a href="transferencia.html" class="nav-sidebar-link">
+                <span class="menu-icon">💸</span>
+                <span class="menu-text">Transferências</span>
+            </a>
+            <a href="extrato.html" class="nav-sidebar-link">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Extrato Interno</span>
+            </a>
+            
+            <div class="my-3"></div>
 
-    <!-- Conteúdo Principal -->
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col">
-                <h3 class="fw-bold text-secondary">Gerenciamento de Contas Bancárias</h3>
-                <p class="text-muted">Cadastre e acompanhe os saldos das suas carteiras e bancos</p>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <!-- Coluna Esquerda: Formulário de Cadastro (Ocupa 4 de 12 espaços) -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 bg-white">
-                    <h5 class="fw-bold text-primary mb-3">Nova Conta</h5>
-                    <form id="formConta">
-                        <div class="mb-3">
-                            <label for="nomeConta" class="form-label">Nome da Conta / Banco</label>
-                            <input type="text" id="nomeConta" class="form-control"
-                                placeholder="Ex: Banco Inter, Carteira" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="tipoConta" class="form-label">Tipo de Conta</label>
-                            <select id="tipoConta" class="form-control" required>
-                                <option value="Corrente">Conta Corrente</option>
-                                <option value="Poupança">Poupança</option>
-                                <option value="Investimento">Investimentos</option>
-                                <option value="Dinheiro">Dinheiro em Espécie</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="saldoInicial" class="form-label">Saldo Inicial (R$)</label>
-                            <input type="number" step="0.01" id="saldoInicial" class="form-control" placeholder="0.00"
-                                required>
-                        </div>
-
-                        <!-- Alerta dinâmico de feedback -->
-                        <div id="mensagemAlerta" class="alert d-none small" role="alert"></div>
-
-                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2">Salvar Conta</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Coluna Direita: Tabela de Contas Cadastradas (Ocupa 8 de 12 espaços) -->
-            <div class="col-md-8">
-                <div class="card border-0 shadow-sm p-4 bg-white">
-                    <h5 class="fw-bold text-secondary mb-3">Minhas Contas Ativas</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nome do Banco / Carteira</th>
-                                    <th>Tipo</th>
-                                    <th class="text-end">Saldo Atual</th>
-                                </tr>
-                            </thead>
-                            <!-- Corpo da tabela alimentado dinamicamente pelo JavaScript -->
-                            <tbody id="tabelaContas">
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">Carregando contas...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <!-- 🌐 MENU 2: CADASTROS -->
+            <div class="sidebar-heading">⚙️ Cadastros</div>
+            <a href="contas.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏦</span>
+                <span class="menu-text">Contas Bancárias</span>
+            </a>
+            <a href="centros-custos.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏢</span>
+                <span class="menu-text">Centros de Custo</span>
+            </a>
+            <a href="categorias.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏷️</span>
+                <span class="menu-text">Categorias</span>
+            </a>
+            
+            <div class="border-top border-secondary mt-4 pt-3">
+                <a href="#" id="btnSair" class="nav-sidebar-link text-danger">
+                    <span class="menu-icon">🚪</span>
+                    <span class="menu-text">Sair do Sistema</span>
+                </a>
             </div>
         </div>
     </div>
-    <!-- Configuração Global da API (Obrigatório vir primeiro) -->
+
+    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL -->
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row mb-4">
+                <div class="col">
+                    <h3 class="fw-bold text-secondary">Gerenciamento de Contas Bancárias</h3>
+                    <p class="text-muted">Cadastre e acompanhe os saldos das suas carteiras e bancos</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Coluna Esquerda: Formulário de Cadastro -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm p-4 bg-white">
+                        <h5 class="fw-bold text-primary mb-3">Nova Conta</h5>
+                        <form id="formConta">
+                            <div class="mb-3">
+                                <label for="nomeConta" class="form-label">Nome da Conta / Banco</label>
+                                <input type="text" id="nomeConta" class="form-control" placeholder="Ex: Banco Inter, Carteira" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tipoConta" class="form-label">Tipo de Conta</label>
+                                <select id="tipoConta" class="form-control" required>
+                                    <option value="Corrente">Conta Corrente</option>
+                                    <option value="Poupança">Poupança</option>
+                                    <option value="Investimento">Investimentos</option>
+                                    <option value="Dinheiro">Dinheiro em Espécie</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="saldoInicial" class="form-label">Saldo Inicial (R$)</label>
+                                <input type="number" step="0.01" id="saldoInicial" class="form-control" placeholder="0.00" required>
+                            </div>
+
+                            <div id="mensagemAlerta" class="alert d-none small" role="alert"></div>
+                            <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2">Salvar Conta</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Coluna Direita: Tabela de Contas Cadastradas -->
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-sm p-4 bg-white">
+                        <h5 class="fw-bold text-secondary mb-3">Minhas Contas Ativas</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome do Banco / Carteira</th>
+                                        <th>Tipo</th>
+                                        <th class="text-end">Saldo Atual</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaContas">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">Carregando contas...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- Fecha a row g-4 -->
+        </div> <!-- Fecha o container-fluid -->
+    </div> <!-- Fecha o content-wrapper -->
+
+    <!-- Scripts de Configuração e Controle -->
     <script src="config.js"></script>
-    <!-- Script de Integração -->
+    <script>
+        // Isolamento de Logout independente para evitar travar o arquivo contas.js
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token_financas');
+            if (!token) { window.location.href = 'index.html'; return; }
+
+            const efetuarLogout = (e) => {
+                if(e) e.preventDefault();
+                localStorage.removeItem('token_financas');
+                window.location.href = 'index.html';
+            };
+
+            document.getElementById('btnSair')?.addEventListener('click', efetuarLogout);
+            document.getElementById('btnSairCelular')?.addEventListener('click', efetuarLogout);
+        });
+    </script>
     <script src="contas.js"></script>
-     <!-- Script do Bootstrap local para fazer o Dropdown abrir -->
     <script src="bootstrap.bundle.min.js"></script>
 </body>
 
