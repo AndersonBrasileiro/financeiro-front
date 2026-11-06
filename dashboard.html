@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - ERP Finanças</title>
-    <link rel="stylesheet" href="https://jsdelivr.net">
+    <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-light">
@@ -92,7 +92,7 @@
         </div>
     </div>
 
-    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL (Garante que os cards fiquem alinhados ao lado do menu) -->
+    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL (Alinhada horizontalmente com o menu) -->
     <div class="content-wrapper">
         <div class="container-fluid">
 
@@ -104,7 +104,7 @@
                 </div>
             </div>
 
-            <!-- 📊 CARDS DE RESUMO PRESERVADOS (Fluidos para Celular e Computador) -->
+            <!-- 📊 CARDS DE RESUMO PRESERVADOS (Grid Bootstrap Estabilizada) -->
             <div class="row g-3 mb-4">
                 <!-- 1. Saldo Atual Consolidado -->
                 <div class="col-12 col-sm-6 col-xl-3">
@@ -158,7 +158,7 @@
     <script src="config.js"></script>
     <script src="https://jsdelivr.net"></script>
     
-    <!-- 📋 INTEGRAÇÃO DOS SCRIPTS DO DASHBOARD E LOGOUT DE FORMA SEGURA -->
+    <!-- 📋 LÓGICA DO SEU DASHBOARD E LOGOUT -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token_financas');
