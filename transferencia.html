@@ -9,99 +9,194 @@
 </head>
 <body class="bg-light">
 
-    <!-- Menu de Navegação Superior (Responsivo) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (Responsivo) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-lg-none">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="dashboard.html">🚀 Finanças ERP</a>
-            <div class="d-flex">
-                <a href="dashboard.html" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
-                <button id="btnSair" class="btn btn-danger btn-sm">Sair</button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuCelular">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menuCelular">
+                <div class="navbar-nav pt-2">
+                    <!-- Bloco Financeiro -->
+                    <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">💰 Financeiro</div>
+                    <a class="nav-link" href="dashboard.html">📊 Visão Geral</a>
+                    <a class="nav-link" href="pagar.html">📄 Contas a Pagar</a>
+                    <a class="nav-link" href="receber.html">💵 Contas a Receber</a>
+                    <a class="nav-link" href="transferencia.html">💸 Transferências</a>
+                    <a class="nav-link" href="extrato.html">📋 Extrato Interno</a>
+                    
+                    <hr class="dropdown-divider bg-secondary my-2">
+                    
+                    <!-- Bloco Cadastros -->
+                    <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">⚙️ Cadastros</div>
+                    <a class="nav-link" href="contas.html">🏦 Contas Bancárias</a>
+                    <a class="nav-link" href="centros-custos.html">🏢 Centros de Custo</a>
+                    <a class="nav-link" href="categorias.html">🏷️ Categorias</a>
+                    
+                    <hr class="dropdown-divider bg-light my-3">
+                    <button id="btnSairCelular" class="btn btn-danger btn-sm m-3">Sair do Sistema</button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container mb-5">
-        <div class="row mb-3">
-            <div class="col-12">
-                <h2 class="fw-bold text-dark">💸 Transferência entre Contas</h2>
-                <p class="text-muted">Movimente saldos entre suas contas bancárias de forma simples e segura.</p>
-            </div>
-        </div>
+    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE (Computador) -->
+    <div class="sidebar-supabase">
+        <a href="dashboard.html" class="text-decoration-none d-block py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem; transition: background 0.2s;">
+            🚀 <span class="ms-2">ERP</span>
+        </a>
+        <div class="pt-3">
+            <!-- 🌐 MENU 1: FINANCEIRO -->
+            <div class="sidebar-heading">💰 Financeiro</div>
+            <a href="dashboard.html" class="nav-sidebar-link">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Visão Geral / Dashboard</span>
+            </a>
+            <a href="pagar.html" class="nav-sidebar-link">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Contas a Pagar</span>
+            </a>
+            <a href="receber.html" class="nav-sidebar-link">
+                <span class="menu-icon">💵</span>
+                <span class="menu-text">Contas a Receber</span>
+            </a>
+            <a href="transferencia.html" class="nav-sidebar-link">
+                <span class="menu-icon">💸</span>
+                <span class="menu-text">Transferências</span>
+            </a>
+            <a href="extrato.html" class="nav-sidebar-link">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Extrato Interno</span>
+            </a>
+            
+            <div class="my-3"></div>
 
-        <div class="row">
-            <!-- Formulário de Transferência (col-12 ocupa tudo no celular, col-md-6 ocupa metade em telas grandes) -->
-            <div class="col-12 col-md-6 mb-4">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-4">
-                        <h5 class="card-title fw-bold mb-4 text-secondary">Nova Movimentação</h5>
-                        
-                        <!-- Alerta de Feedback -->
-                        <div id="alertaFeedback" class="alert d-none" role="alert"></div>
-
-                        <form id="formTransferencia">
-                            <!-- Conta de Origem -->
-                            <div class="mb-3">
-                                <label for="selectContaOrigem" class="form-label fw-bold small text-muted">Conta de Origem (Débito)</label>
-                                <select id="selectContaOrigem" class="form-select" required>
-                                    <option value="">-- Selecione a Origem --</option>
-                                </select>
-                            </div>
-
-                            <!-- Conta de Destino -->
-                            <div class="mb-3">
-                                <label for="selectContaDestino" class="form-label fw-bold small text-muted">Conta de Destino (Crédito)</label>
-                                <select id="selectContaDestino" class="form-select" required>
-                                    <option value="">-- Selecione o Destino --</option>
-                                </select>
-                            </div>
-
-                            <!-- Valor e Data (Lado a lado em telas grandes, empilhados no celular) -->
-                            <div class="row">
-                                <div class="col-12 col-md-6 mb-3">
-                                    <label for="inputValor" class="form-label fw-bold small text-muted">Valor (R$)</label>
-                                    <input type="number" step="0.01" min="0.01" id="inputValor" class="form-control" placeholder="0,00" required>
-                                </div>
-                                <div class="col-12 col-md-6 mb-3">
-                                    <label for="inputData" class="form-label fw-bold small text-muted">Data da Transferência</label>
-                                    <input type="date" id="inputData" class="form-control" required>
-                                </div>
-                            </div>
-
-                            <!-- Observação / Histórico -->
-                            <div class="mb-4">
-                                <label for="inputObservacao" class="form-label fw-bold small text-muted">Observação / Histórico (Opcional)</label>
-                                <input type="text" id="inputObservacao" class="form-control" placeholder="Ex: Ajuste de saldo entre contas">
-                            </div>
-
-                            <!-- Botões de Ação -->
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <button type="button" id="btnCancelar" class="btn btn-light px-4">Cancelar</button>
-                                <button type="submit" class="btn btn-primary px-4">Executar Transferência</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Painel Informativo Lateral (Oculta no celular se quiser, mas aqui fica fluido em col-12 / col-md-6) -->
-            <div class="col-12 col-md-6 mb-4">
-                <div class="card bg-dark text-white border-0 shadow-sm h-100">
-                    <div class="card-body p-4 d-flex flex-column justify-content-center">
-                        <h4 class="fw-bold mb-3 text-info">Regra Transacional Rígida</h4>
-                        <p class="text-light-50">Ao confirmar a operação, o sistema efetuará duas ações em lote:</p>
-                        <ul class="text-light-50 fs-6">
-                            <li class="mb-2"><strong>Debitará</strong> o valor imediatamente da conta de origem.</li>
-                            <li class="mb-2"><strong>Creditará</strong> o valor imediatamente na conta de destino.</li>
-                            <li class="mb-2">Gerará os históricos correspondentes no seu <strong>Extrato Interno</strong> de auditoria.</li>
-                        </ul>
-                    </div>
-                </div>
+            <!-- 🌐 MENU 2: CADASTROS -->
+            <div class="sidebar-heading">⚙️ Cadastros</div>
+            <a href="contas.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏦</span>
+                <span class="menu-text">Contas Bancárias</span>
+            </a>
+            <a href="centros-custos.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏢</span>
+                <span class="menu-text">Centros de Custo</span>
+            </a>
+            <a href="categorias.html" class="nav-sidebar-link">
+                <span class="menu-icon">🏷️</span>
+                <span class="menu-text">Categorias</span>
+            </a>
+            
+            <div class="border-top border-secondary mt-4 pt-3">
+                <a href="#" id="btnSair" class="nav-sidebar-link text-danger">
+                    <span class="menu-icon">🚪</span>
+                    <span class="menu-text">Sair do Sistema</span>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Scripts de Configuração e Controle (Ordem hierárquica obrigatória) -->
+    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL -->
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h2 class="fw-bold text-dark">💸 Transferência entre Contas</h2>
+                    <p class="text-muted">Movimente saldos entre suas contas bancárias de forma simples e segura.</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Formulário de Transferência -->
+                <div class="col-12 col-md-6 mb-4">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold mb-4 text-secondary">Nova Movimentação</h5>
+                            
+                            <!-- Alerta de Feedback -->
+                            <div id="alertaFeedback" class="alert d-none" role="alert"></div>
+
+                            <form id="formTransferencia">
+                                <!-- Conta de Origem -->
+                                <div class="mb-3">
+                                    <label for="selectContaOrigem" class="form-label fw-bold small text-muted">Conta de Origem (Débito)</label>
+                                    <select id="selectContaOrigem" class="form-select" required>
+                                        <option value="">-- Selecione a Origem --</option>
+                                    </select>
+                                </div>
+
+                                <!-- Conta de Destino -->
+                                <div class="mb-3">
+                                    <label for="selectContaDestino" class="form-label fw-bold small text-muted">Conta de Destino (Crédito)</label>
+                                    <select id="selectContaDestino" class="form-select" required>
+                                        <option value="">-- Selecione o Destino --</option>
+                                    </select>
+                                </div>
+                                <!-- Valor e Data -->
+                                <div class="row">
+                                    <div class="col-12 col-sm-6 mb-3">
+                                        <label for="inputValor" class="form-label fw-bold small text-muted">Valor (R$)</label>
+                                        <input type="number" step="0.01" min="0.01" id="inputValor" class="form-control" placeholder="0,00" required>
+                                    </div>
+                                    <div class="col-12 col-sm-6 mb-3">
+                                        <label for="inputData" class="form-label fw-bold small text-muted">Data da Transferência</label>
+                                        <input type="date" id="inputData" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <!-- Observação -->
+                                <div class="mb-4">
+                                    <label for="inputObservacao" class="form-label fw-bold small text-muted">Observação / Histórico (Opcional)</label>
+                                    <input type="text" id="inputObservacao" class="form-control" placeholder="Ex: Ajuste de saldo entre contas">
+                                </div>
+
+                                <!-- Botões de Ação -->
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button type="button" id="btnCancelar" class="btn btn-light px-4">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary px-4">Executar Transferência</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Painel Informativo Lateral -->
+                <div class="col-12 col-md-6 mb-4">
+                    <div class="card bg-dark text-white border-0 shadow-sm h-100">
+                        <div class="card-body p-4 d-flex flex-column justify-content-center">
+                            <h4 class="fw-bold mb-3 text-info">Regra Transacional Rígida</h4>
+                            <p class="text-light-50">Ao confirmar a operação, o sistema efetuará duas ações em lote:</p>
+                            <ul class="text-light-50 fs-6">
+                                <li class="mb-2"><strong>Debitará</strong> o valor imediatamente da conta de origem.</li>
+                                <li class="mb-2"><strong>Creditará</strong> o valor imediatamente na conta de destino.</li>
+                                <li class="mb-2">Gerará os históricos correspondentes no seu <strong>Extrato Interno</strong> de auditoria.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- Fecha a row -->
+        </div> <!-- Fecha o container-fluid -->
+    </div> <!-- Fecha o content-wrapper -->
+
+    <!-- Scripts de Configuração e Controle -->
     <script src="config.js"></script>
+    <script>
+        // Isolamento de Logout independente para evitar travar o arquivo transferencia.js
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token_financas');
+            if (!token) { window.location.href = 'index.html'; return; }
+
+            const efetuarLogout = (e) => {
+                if(e) e.preventDefault();
+                localStorage.removeItem('token_financas');
+                window.location.href = 'index.html';
+            };
+
+            document.getElementById('btnSair')?.addEventListener('click', efetuarLogout);
+            document.getElementById('btnSairCelular')?.addEventListener('click', efetuarLogout);
+        });
+    </script>
     <script src="transferencia.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
 </body>
 </html>
