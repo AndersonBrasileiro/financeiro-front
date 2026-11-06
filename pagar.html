@@ -185,13 +185,25 @@
         </div>
     </div>
 
-    <!-- Configuração Global da API -->
+        <!-- Configuração Global da API -->
     <script src="config.js"></script>
     <script>
+        // 🌟 CORREÇÃO BLINDADA: Gerencia o logout direto no HTML para não travar o pagar.js
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('btnSairCelular')?.addEventListener('click', () => {
+            const token = localStorage.getItem('token_financas');
+            if (!token) { window.location.href = 'index.html'; return; }
+
+            const efetuarLogout = (e) => {
+                if(e) e.preventDefault();
                 localStorage.removeItem('token_financas');
                 window.location.href = 'index.html';
-            });
+            };
+
+            // Proteção contra elementos nulos usando a interrogação (?.)
+            document.getElementById('btnSair')?.addEventListener('click', efetuarLogout);
+            document.getElementById('btnSairCelular')?.addEventListener('click', efetuarLogout);
         });
     </script>
+    <script src="pagar.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+</body>
