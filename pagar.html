@@ -11,7 +11,7 @@
 
 <body class="bg-light">
 
-    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (Responsivo) -->
+    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-lg-none">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="dashboard.html">🚀 Finanças ERP</a>
@@ -20,21 +20,17 @@
             </button>
             <div class="collapse navbar-collapse" id="menuCelular">
                 <div class="navbar-nav pt-2">
-                    <!-- Bloco Financeiro -->
                     <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">💰 Financeiro</div>
+                    <a class="nav-link" href="dashboard.html">📊 Visão Geral</a>
                     <a class="nav-link" href="pagar.html">📄 Contas a Pagar</a>
                     <a class="nav-link" href="receber.html">💵 Contas a Receber</a>
                     <a class="nav-link" href="transferencia.html">💸 Transferências</a>
                     <a class="nav-link" href="extrato.html">📋 Extrato Interno</a>
-                    
                     <hr class="dropdown-divider bg-secondary my-2">
-                    
-                    <!-- Bloco Cadastros -->
                     <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">⚙️ Cadastros</div>
                     <a class="nav-link" href="contas.html">🏦 Contas Bancárias</a>
-                    <a class="nav-link" href="centros-custos.html">🏢 Centros de Custo</a>
+                    <a class="nav-link" href="centros.html">🏢 Centros de Custo</a>
                     <a class="nav-link" href="categorias.html">🏷️ Categorias</a>
-                    
                     <hr class="dropdown-divider bg-light my-3">
                     <button id="btnSairCelular" class="btn btn-danger btn-sm m-3">Sair do Sistema</button>
                 </div>
@@ -42,89 +38,56 @@
         </div>
     </nav>
 
-    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE (Computador) -->
+    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE -->
     <div class="sidebar-supabase">
-       <a href="dashboard.html" class="text-decoration-none d-block py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem; transition: background 0.2s;">
+        <a href="dashboard.html" class="text-decoration-none d-block py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem;">
             🚀 <span class="ms-2">ERP</span>
         </a>
         <div class="pt-3">
-            
-            <!-- 🌐 MENU 1: FINANCEIRO -->
             <div class="sidebar-heading">💰 Financeiro</div>
-            <!-- 🌟 NOVO ITEM: Atalho explícito para o Dashboard no menu -->
-            <a href="dashboard.html" class="nav-sidebar-link">
-                <span class="menu-icon">📊</span>
-                <span class="menu-text">Visão Geral / Dashboard</span>
-            </a>
-            <a href="pagar.html" class="nav-sidebar-link">
-                <span class="menu-icon">📄</span>
-                <span class="menu-text">Contas a Pagar</span>
-            </a>
-
-            <a href="receber.html" class="nav-sidebar-link">
-                <span class="menu-icon">💵</span>
-                <span class="menu-text">Contas a Receber</span>
-            </a>
-            <a href="transferencia.html" class="nav-sidebar-link">
-                <span class="menu-icon">💸</span>
-                <span class="menu-text">Transferências</span>
-            </a>
-            <a href="extrato.html" class="nav-sidebar-link">
-                <span class="menu-icon">📋</span>
-                <span class="menu-text">Extrato Interno</span>
-            </a>
-            
+            <a href="dashboard.html" class="nav-sidebar-link"><span class="menu-icon">📊</span><span class="menu-text">Visão Geral / Dashboard</span></a>
+            <a href="pagar.html" class="nav-sidebar-link"><span class="menu-icon">📄</span><span class="menu-text">Contas a Pagar</span></a>
+            <a href="receber.html" class="nav-sidebar-link"><span class="menu-icon">💵</span><span class="menu-text">Contas a Receber</span></a>
+            <a href="transferencia.html" class="nav-sidebar-link"><span class="menu-icon">💸</span><span class="menu-text">Transferências</span></a>
+            <a href="extrato.html" class="nav-sidebar-link"><span class="menu-icon">📋</span><span class="menu-text">Extrato Interno</span></a>
             <div class="my-3"></div>
-
-            <!-- 🌐 MENU 2: CADASTROS -->
             <div class="sidebar-heading">⚙️ Cadastros</div>
-            <a href="contas.html" class="nav-sidebar-link">
-                <span class="menu-icon">🏦</span>
-                <span class="menu-text">Contas Bancárias</span>
-            </a>
-            <a href="centros.html" class="nav-sidebar-link">
-                <span class="menu-icon">🏢</span>
-                <span class="menu-text">Centros de Custo</span>
-            </a>
-            <a href="categorias.html" class="nav-sidebar-link">
-                <span class="menu-icon">🏷️</span>
-                <span class="menu-text">Categorias</span>
-            </a>
-            
+            <a href="contas.html" class="nav-sidebar-link"><span class="menu-icon">🏦</span><span class="menu-text">Contas Bancárias</span></a>
+            <a href="centros.html" class="nav-sidebar-link"><span class="menu-icon">🏢</span><span class="menu-text">Centros de Custo</span></a>
+            <a href="categorias.html" class="nav-sidebar-link"><span class="menu-icon">🏷️</span><span class="menu-text">Categorias</span></a>
             <div class="border-top border-secondary mt-4 pt-3">
-                <a href="#" id="btnSair" class="nav-sidebar-link text-danger">
-                    <span class="menu-icon">🚪</span>
-                    <span class="menu-text">Sair do Sistema</span>
-                </a>
+                <a href="#" id="btnSair" class="nav-sidebar-link text-danger"><span class="menu-icon">🚪</span><span class="menu-text">Sair do Sistema</span></a>
             </div>
         </div>
     </div>
 
-    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL (Alinhada com a barra lateral) -->
+    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL -->
     <div class="content-wrapper">
         <div class="container-fluid">
             <div class="row mb-4">
                 <div class="col">
                     <h3 class="fw-bold text-danger">Contas a Pagar (Despesas)</h3>
-                    <p class="text-muted">Gerencie suas saídas de caixa e provisionamentos futuros</p>
+                    <p class="text-muted">Gerencie suas saídas de caixa, liquidações e provisionamentos futuros</p>
                 </div>
             </div>
 
             <div class="row g-4">
-                <!-- Formulário Lateral de Inclusão -->
-                <div class="col-md-4">
+                <!-- Formulário Lateral de Inclusão / Edição -->
+                <div class="col-lg-4">
                     <div class="card border-0 shadow-sm p-4 bg-white">
-                        <h5 class="fw-bold text-danger mb-3">Nova Despesa</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 id="tituloFormulario" class="fw-bold text-danger mb-0">Nova Despesa</h5>
+                            <button type="button" id="btnCancelarEdicao" class="btn btn-sm btn-outline-secondary d-none">Cancelar Edição</button>
+                        </div>
                         <form id="formPagar">
+                            <input type="hidden" id="lancamentoId">
                             <div class="mb-3">
                                 <label for="descricao" class="form-label">Descrição da Despesa</label>
-                                <input type="text" id="descricao" class="form-control"
-                                    placeholder="Ex: Conta de Luz, Aluguel" required>
+                                <input type="text" id="descricao" class="form-control" placeholder="Ex: Aluguel, Energia, Internet" required>
                             </div>
                             <div class="mb-3">
                                 <label for="valor" class="form-label">Valor (R$)</label>
-                                <input type="number" step="0.01" id="valor" class="form-control" placeholder="0.00"
-                                    required>
+                                <input type="number" step="0.01" id="valor" class="form-control" placeholder="0.00" required>
                             </div>
                             <div class="mb-3">
                                 <label for="dataVencimento" class="form-label">Data de Vencimento</label>
@@ -136,35 +99,67 @@
                                     <option value="">Carregando suas contas...</option>
                                 </select>
                             </div>
-                            <!-- Centro de Custo -->
                             <div class="mb-3">
                                 <label for="selectCentroCusto" class="form-label">Centro de Custo / Destinação</label>
-                                <select id="selectCentroCusto" class="form-control" required>
+                                <select id="selectCentroCusto" class="form-control">
                                     <option value="">Carregando centros de custo...</option>
                                 </select>
                             </div>
-
-                            <!-- Categoria -->
                             <div class="mb-3">
-                                <label for="selectCategoria" class="form-label">Categoria do Lançamento</label>
+                                <label for="selectCategoria" class="form-label">Categoria Analítica</label>
                                 <select id="selectCategoria" class="form-control" required>
                                     <option value="">Carregando categorias...</option>
                                 </select>
                             </div>
-
-                            <div class="mb-3 form-check form-switch">
+                            <div id="boxCheckPago" class="mb-3 form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="pago">
-                                <label class="form-check-input-label fw-bold text-success" for="pago">Marcar como PAGA (Liquidar agora)</label>
+                                <label class="form-check-label fw-bold text-danger" for="pago">Marcar como PAGA (Liquidar agora)</label>
                             </div>
-
                             <div id="mensagemAlerta" class="alert d-none small" role="alert"></div>
-                            <button type="submit" class="btn btn-danger w-100 fw-bold py-2 mt-2">Salvar Despesa</button>
+                            <button type="submit" id="btnSalvarPagar" class="btn btn-danger w-100 fw-bold py-2 mt-2">Salvar Despesa</button>
                         </form>
                     </div>
                 </div>
+                <!-- Coluna Direita: Filtros + Tabela de Histórico -->
+                <div class="col-lg-8">
+                    <!-- Painel de Filtros Avançados -->
+                    <div class="card border-0 shadow-sm p-3 bg-white mb-4">
+                        <h6 class="fw-bold text-secondary mb-3">🔍 Filtrar Lançamentos</h6>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-3 col-6">
+                                <label for="filtroDataInicio" class="form-label small text-muted mb-1">Venc. Inicial</label>
+                                <input type="date" id="filtroDataInicio" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="filtroDataFim" class="form-label small text-muted mb-1">Venc. Final</label>
+                                <input type="date" id="filtroDataFim" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="filtroConta" class="form-label small text-muted mb-1">Conta</label>
+                                <select id="filtroConta" class="form-select form-select-sm">
+                                    <option value="">Todas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="filtroCentroCusto" class="form-label small text-muted mb-1">Centro de Custo</label>
+                                <select id="filtroCentroCusto" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-12 mt-2">
+                                <label for="filtroCategoria" class="form-label small text-muted mb-1">Categoria Analítica</label>
+                                <select id="filtroCategoria" class="form-select form-select-sm">
+                                    <option value="">Todas as Analíticas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-12 mt-2 d-flex gap-2 justify-content-md-end">
+                                <button type="button" id="btnLimparFiltros" class="btn btn-sm btn-outline-secondary">Limpar</button>
+                                <button type="button" id="btnAplicarFiltros" class="btn btn-sm btn-dark px-3">Filtrar</button>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Tabela de Listagem -->
-                <div class="col-md-8">
+                    <!-- Tabela de Listagem de Despesas -->
                     <div class="card border-0 shadow-sm p-4 bg-white">
                         <h5 class="fw-bold text-secondary mb-3">Histórico de Contas a Pagar</h5>
                         <div class="table-responsive">
@@ -173,14 +168,15 @@
                                     <tr>
                                         <th>Vencimento</th>
                                         <th>Descrição</th>
-                                        <th>Conta de Saída</th>
+                                        <th>Conta</th>
                                         <th>Status</th>
                                         <th class="text-end">Valor</th>
+                                        <th class="text-center">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabelaPagar">
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted py-4">Nenhum lançamento encontrado.</td>
+                                        <td colspan="6" class="text-center text-muted py-4">Carregando lançamentos...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -191,21 +187,18 @@
         </div>
     </div>
 
-        <!-- Configuração Global da API -->
     <script src="config.js"></script>
     <script>
-        // 🌟 CORREÇÃO BLINDADA: Gerencia o logout direto no HTML para não travar o pagar.js
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token_financas');
             if (!token) { window.location.href = 'index.html'; return; }
 
             const efetuarLogout = (e) => {
-                if(e) e.preventDefault();
+                if (e) e.preventDefault();
                 localStorage.removeItem('token_financas');
                 window.location.href = 'index.html';
             };
 
-            // Proteção contra elementos nulos usando a interrogação (?.)
             document.getElementById('btnSair')?.addEventListener('click', efetuarLogout);
             document.getElementById('btnSairCelular')?.addEventListener('click', efetuarLogout);
         });
@@ -213,3 +206,5 @@
     <script src="pagar.js"></script>
     <script src="bootstrap.bundle.min.js"></script>
 </body>
+
+</html>
