@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - ERP Finanças</title>
-    <link rel="stylesheet" href="bootstrap.min.css">
+    <link href="bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="bg-light">
 
-    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (Responsivo) -->
+    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (IDÊNTICO AO PAGAR/RECEBER) -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-lg-none">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="dashboard.html">🚀 Finanças ERP</a>
@@ -36,148 +38,91 @@
         </div>
     </nav>
 
-    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE (Computador) -->
+    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE -->
     <div class="sidebar-supabase">
-        <a href="dashboard.html" class="text-decoration-none d-block py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem; transition: background 0.2s;">
+        <a href="dashboard.html" class="text-decoration-none d-block py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem;">
             🚀 <span class="ms-2">ERP</span>
         </a>
         <div class="pt-3">
-            
-            <!-- 🌐 MENU 1: FINANCEIRO -->
             <div class="sidebar-heading">💰 Financeiro</div>
-            <!-- 🌟 NOVO ITEM: Atalho explícito para o Dashboard no menu -->
-            <a href="dashboard.html" class="nav-sidebar-link">
-                <span class="menu-icon">📊</span>
-                <span class="menu-text">Visão Geral / Dashboard</span>
-            </a>
-            <a href="pagar.html" class="nav-sidebar-link">
-                <span class="menu-icon">📄</span>
-                <span class="menu-text">Contas a Pagar</span>
-            </a>
-
-            <a href="receber.html" class="nav-sidebar-link">
-                <span class="menu-icon">💵</span>
-                <span class="menu-text">Contas a Receber</span>
-            </a>
-            <a href="transferencia.html" class="nav-sidebar-link">
-                <span class="menu-icon">💸</span>
-                <span class="menu-text">Transferências</span>
-            </a>
-            <a href="extrato.html" class="nav-sidebar-link">
-                <span class="menu-icon">📋</span>
-                <span class="menu-text">Extrato Interno</span>
-            </a>
-            
+            <a href="dashboard.html" class="nav-sidebar-link"><span class="menu-icon">📊</span><span class="menu-text">Visão Geral / Dashboard</span></a>
+            <a href="pagar.html" class="nav-sidebar-link"><span class="menu-icon">📄</span><span class="menu-text">Contas a Pagar</span></a>
+            <a href="receber.html" class="nav-sidebar-link"><span class="menu-icon">💵</span><span class="menu-text">Contas a Receber</span></a>
+            <a href="transferencia.html" class="nav-sidebar-link"><span class="menu-icon">💸</span><span class="menu-text">Transferências</span></a>
+            <a href="extrato.html" class="nav-sidebar-link"><span class="menu-icon">📋</span><span class="menu-text">Extrato Interno</span></a>
             <div class="my-3"></div>
-
-            <!-- 🌐 MENU 2: CADASTROS -->
             <div class="sidebar-heading">⚙️ Cadastros</div>
-            <a href="contas.html" class="nav-sidebar-link">
-                <span class="menu-icon">🏦</span>
-                <span class="menu-text">Contas Bancárias</span>
-            </a>
-            <a href="centros.html" class="nav-sidebar-link">
-                <span class="menu-icon">🏢</span>
-                <span class="menu-text">Centros de Custo</span>
-            </a>
-            <a href="categorias.html" class="nav-sidebar-link">
-                <span class="menu-icon">🏷️</span>
-                <span class="menu-text">Categorias</span>
-            </a>
-            
+            <a href="contas.html" class="nav-sidebar-link"><span class="menu-icon">🏦</span><span class="menu-text">Contas Bancárias</span></a>
+            <a href="centros.html" class="nav-sidebar-link"><span class="menu-icon">🏢</span><span class="menu-text">Centros de Custo</span></a>
+            <a href="categorias.html" class="nav-sidebar-link"><span class="menu-icon">🏷️</span><span class="menu-text">Categorias</span></a>
             <div class="border-top border-secondary mt-4 pt-3">
-                <a href="#" id="btnSair" class="nav-sidebar-link text-danger">
-                    <span class="menu-icon">🚪</span>
-                    <span class="menu-text">Sair do Sistema</span>
-                </a>
+                <a href="#" id="btnSair" class="nav-sidebar-link text-danger"><span class="menu-icon">🚪</span><span class="menu-text">Sair do Sistema</span></a>
             </div>
         </div>
     </div>
 
-    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL (Alinhada horizontalmente com o menu) -->
+    <!-- 📦 ÁREA DE CONTEÚDO PRINCIPAL -->
     <div class="content-wrapper">
         <div class="container-fluid">
-
-            <!-- Título da Tela -->
             <div class="row mb-4">
-                <div class="col-12">
+                <div class="col">
                     <h2 class="fw-bold text-dark">Painel de Controle</h2>
                     <p class="text-muted">Resumo financeiro em tempo real e projeções consolidadas do sistema.</p>
                 </div>
             </div>
 
-            <!-- 📊 CARDS DE RESUMO PRESERVADOS (Grid Bootstrap Estabilizada) -->
-            <div class="row g-3 mb-4">
-                <!-- 1. Saldo Atual Consolidado -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100 bg-white">
-                        <div class="card-body p-4">
-                            <span class="text-muted small text-uppercase fw-bold">Saldo Disponível</span>
-                            <h3 id="txtSaldoAtual" class="fw-bold text-primary mt-2">R$ 0,00</h3>
-                            <p class="text-muted small mb-0">Total disponível em contas</p>
-                        </div>
+            <!-- Cards de KPIs Financeiros -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 col-xl-3">
+                    <div class="card border-0 shadow-sm p-3 bg-white h-100">
+                        <span class="text-muted small fw-bold text-uppercase">Saldo Disponível</span>
+                        <h3 id="cardSaldoDisponivel" class="fw-bold text-primary my-2">R$ 0,00</h3>
+                        <small class="text-muted">Total disponível em contas</small>
                     </div>
                 </div>
-
-                <!-- 2. Contas a Receber em Aberto (Entradas) -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100 bg-white">
-                        <div class="card-body p-4">
-                            <span class="text-muted small text-uppercase fw-bold">A Receber (Em Aberto)</span>
-                            <h3 id="txtTotalReceber" class="fw-bold text-success mt-2">R$ 0,00</h3>
-                            <p class="text-muted small mb-0">Previsão de entradas</p>
-                        </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card border-0 shadow-sm p-3 bg-white h-100">
+                        <span class="text-muted small fw-bold text-uppercase">A Receber (Em Aberto)</span>
+                        <h3 id="cardAReceber" class="fw-bold text-success my-2">R$ 0,00</h3>
+                        <small class="text-muted">Previsão de entradas</small>
                     </div>
                 </div>
-
-                <!-- 3. Contas a Pagar em Aberto (Saídas) -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100 bg-white">
-                        <div class="card-body p-4">
-                            <span class="text-muted small text-uppercase fw-bold">A Pagar (Em Aberto)</span>
-                            <h3 id="txtTotalPagar" class="fw-bold text-danger mt-2">R$ 0,00</h3>
-                            <p class="text-muted small mb-0">Compromissos pendentes</p>
-                        </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card border-0 shadow-sm p-3 bg-white h-100">
+                        <span class="text-muted small fw-bold text-uppercase">A Pagar (Em Aberto)</span>
+                        <h3 id="cardAPagar" class="fw-bold text-danger my-2">R$ 0,00</h3>
+                        <small class="text-muted">Compromissos pendentes</small>
                     </div>
                 </div>
-
-                <!-- 4. Saldo Projetado -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100 bg-dark text-white">
-                        <div class="card-body p-4">
-                            <span class="text-info small text-uppercase fw-bold">Saldo Projetado</span>
-                            <h3 id="txtSaldoProjetado" class="fw-bold text-info mt-2">R$ 0,00</h3>
-                            <p class="text-light-50 small mb-0">Fluxo estimado consolidado</p>
-                        </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card border-0 shadow-sm p-3 bg-white h-100">
+                        <span class="text-muted small fw-bold text-uppercase">Saldo Projetado</span>
+                        <h3 id="cardSaldoProjetado" class="fw-bold text-dark my-2">R$ 0,00</h3>
+                        <small class="text-muted">Fluxo estimado consolidado</small>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- Scripts Globais e Bootstrap Bundle -->
     <script src="config.js"></script>
-    <script src="https://jsdelivr.net"></script>
-    
-    <!-- 📋 LÓGICA DO SEU DASHBOARD E LOGOUT -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token_financas');
             if (!token) { window.location.href = 'index.html'; return; }
 
-            if (typeof carregarDadosDashboard === 'function') {
-                carregarDadosDashboard();
-            }
-        });
+            const efetuarLogout = (e) => {
+                if (e) e.preventDefault();
+                localStorage.removeItem('token_financas');
+                window.location.href = 'index.html';
+            };
 
-        const logout = () => {
-            localStorage.removeItem('token_financas');
-            window.location.href = 'index.html';
-        };
-        document.getElementById('btnSair')?.addEventListener('click', logout);
-        document.getElementById('btnSairCelular')?.addEventListener('click', logout);
+            document.getElementById('btnSair')?.addEventListener('click', efetuarLogout);
+            document.getElementById('btnSairCelular')?.addEventListener('click', efetuarLogout);
+        });
     </script>
     <script src="dashboard.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
