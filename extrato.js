@@ -100,14 +100,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     const contaNome = m.conta ? m.conta.nome : 'N/A';
 
-                    // Formatação segura da data vinda do campo dataHora do Java
+                                        // Formatação segura da data vinda do campo dataHora do Java
                     const dataBruta = m.dataHora || m.dataMovimentacao || m.data;
                     let dataExibicao = 'N/A';
-                    if (dataBruta) {
-                        const apenasData = dataBruta.toString().split('T');
+                    if (Array.isArray(dataBruta)) {
+                        const [ano, mes, dia] = dataBruta;
+                        dataExibicao = `${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}/${ano}`;
+                    } else if (dataBruta) {
+                        const apenasData = dataBruta.toString().split('T')[0];
                         const [ano, mes, dia] = apenasData.split('-');
                         dataExibicao = `${dia}/${mes}/${ano}`;
                     }
+
 
                     const saldoCor = m.saldoNoMomento >= 0 ? 'text-primary' : 'text-danger';
 
