@@ -58,8 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                // 📈 ALGORITMO BANCÁRIO: Ordena cronologicamente (mais antigas primeiro) para calcular o saldo de baixo para cima
-                movimentacoes.sort((a, b) => a.id - b.id);
+                // 📈 ALGORITMO BANCÁRIO: Ordena cronologicamente pela data real (mais antigas primeiro) para calcular o saldo progressivo
+                movimentacoes.sort((a, b) => {
+                    const dataA = new Date(a.dataHora || a.dataMovimentacao || a.data || 0);
+                    const dataB = new Date(b.dataHora || b.dataMovimentacao || b.data || 0);
+                    return dataA - dataB || a.id - b.id;
+                });
 
                 let saldoAcumulado = 0;
 
@@ -74,12 +78,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         saldoAcumulado -= m.valor;
                     }
                     
-                    // Guarda o valor calculado temporariamente neste registro
                     m.saldoNoMomento = saldoAcumulado;
                 });
 
                 // Segundo passo: Inverte a lista para exibir as mais recentes no topo da tabela
-                movimentacoes.sort((a, b) => b.id - a.id);
+                movimentacoes.sort((a, b) => {
+                    const dataA = new Date(a.dataHora || a.dataMovimentacao || a.data || 0);
+                    const dataB = new Date(b.dataHora || b.dataMovimentacao || b.data || 0);
+                    return dataB - dataA || b.id - a.id;
+                });
 
                 // Terceiro passo: Renderiza as linhas na tela
                 movimentacoes.forEach(m => {
@@ -92,14 +99,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     const sinal = isEntrada ? '+' : '-';
                     
                     const contaNome = m.conta ? m.conta.nome : 'N/A';
-                    const dataFormatada = m.dataMovimentacao || m.data || new Date();
 
-                    // Ajusta a cor do saldo acumulado (Azul se positivo/zero, Vermelho se negativo)
+                    // Formatação segura da data vinda do campo dataHora do Java
+                    const dataBruta = m.dataHora || m.dataMovimentacao || m.data;
+                    let dataExibicao = 'N/A';
+                    if (dataBruta) {
+                        const apenasData = dataBruta.toString().split('T');
+                        const [ano, mes, dia] = apenasData.split('-');
+                        dataExibicao = `${dia}/${mes}/${ano}`;
+                    }
+
                     const saldoCor = m.saldoNoMomento >= 0 ? 'text-primary' : 'text-danger';
 
                     const linha = document.createElement('tr');
                     linha.innerHTML = `
-                        <td>${new Date(dataFormatada).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</td>
+                        <td>${dataExibicao}</td>
                         <td class="fw-bold text-dark">${m.historico || 'Movimentação Automática por Baixa'}</td>
                         <td><span class="badge bg-light text-dark border">${contaNome}</span></td>
                         <td><span class="badge ${badgeCor}">${tipoTexto}</span></td>
@@ -117,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    document.getElementById('btnSair').addEventListener('click', () => {
+    document.getElementById('btnSair')?.addEventListener('click', () => {
         localStorage.removeItem('token_financas');
         window.location.href = 'index.html';
     });
