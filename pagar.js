@@ -147,9 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('btnCancelarEdicao').addEventListener('click', resetarFormulario);
 
-    // 6. LISTA AS DESPESAS APLICANDO OS FILTROS
+        // 6. LISTA AS DESPESAS APLICANDO OS FILTROS (COM FALLBACK AUTOMÁTICO)
     async function listarLancamentosPagar() {
         const tabela = document.getElementById('tabelaPagar');
+        tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Buscando lançamentos...</td></tr>`;
+
         const params = new URLSearchParams({ tipo: 'DESPESA' });
 
         const dataInicio = document.getElementById('filtroDataInicio').value;
@@ -165,58 +167,87 @@ document.addEventListener('DOMContentLoaded', () => {
         if (categoriaId) params.append('categoriaId', categoriaId);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/lancamentos/filtrar?${params.toString()}`, {
+            let response = await fetch(`${API_BASE_URL}/lancamentos/filtrar?${params.toString()}`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
-            if (response.ok) {
-                const despesas = await response.json();
-                tabela.innerHTML = '';
+            let despesas = [];
 
-                if (despesas.length === 0) {
-                    tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Nenhuma despesa encontrada para os filtros selecionados.</td></tr>`;
+            if (response.ok) {
+                despesas = await response.json();
+            } else {
+                console.warn(`Rota /filtrar retornou HTTP ${response.status}. Acionando busca padrão...`);
+                const fallbackResp = await fetch(`${API_BASE_URL}/lancamentos`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!fallbackResp.ok) {
+                    tabela.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Erro ao carregar dados do servidor (HTTP ${fallbackResp.status}). Verifique o deploy da API.</td></tr>`;
                     return;
                 }
 
-                despesas.forEach(l => {
-                    const statusBadge = l.pago
-                        ? '<span class="badge bg-success">Paga</span>'
-                        : '<span class="badge bg-warning text-dark">Em Aberto</span>';
-
-                    const categoriaNome = l.categoria ? l.categoria.nome : 'N/A';
-                    const centroNome = l.centroCusto ? l.centroCusto.nome : 'Padrão';
-
-                    // Botões dinâmicos conforme máquina de estados
-                    const botoesAcao = l.pago
-                        ? `<button class="btn btn-sm btn-outline-warning fw-bold btn-estornar" data-id="${l.id}" title="Estornar baixa">↩️ Estornar</button>`
-                        : `
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button class="btn btn-success btn-baixar" data-id="${l.id}" title="Baixar título">✅ Baixar</button>
-                                <button class="btn btn-outline-primary btn-editar" data-id="${l.id}" title="Alterar título">✏️</button>
-                                <button class="btn btn-outline-danger btn-excluir" data-id="${l.id}" title="Excluir título">🗑️</button>
-                            </div>
-                          `;
-
-                    const line = document.createElement('tr');
-                    line.innerHTML = `
-                        <td>${new Date(l.dataVencimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
-                        <td class="fw-bold">
-                            ${l.descricao}
-                            <br><small class="text-muted fw-normal">📁 ${categoriaNome} | 🏢 ${centroNome}</small>
-                        </td>
-                        <td><span class="badge bg-light text-dark border">${l.conta ? l.conta.nome : 'N/A'}</span></td>
-                        <td>${statusBadge}</td>
-                        <td class="text-end fw-bold text-danger">- R$ ${l.valor.toFixed(2)}</td>
-                        <td class="text-center">${botoesAcao}</td>
-                    `;
-                    tabela.appendChild(line);
+                const todos = await fallbackResp.json();
+                despesas = todos.filter(l => {
+                    if (l.tipoLancamento !== 'DESPESA') return false;
+                    if (dataInicio && l.dataVencimento < dataInicio) return false;
+                    if (dataFim && l.dataVencimento > dataFim) return false;
+                    if (contaId && (!l.conta || l.conta.id != contaId)) return false;
+                    if (centroCustoId && (!l.centroCusto || l.centroCusto.id != centroCustoId)) return false;
+                    if (categoriaId && (!l.categoria || l.categoria.id != categoriaId)) return false;
+                    return true;
                 });
-
-                vincularEventosBotoes(despesas);
             }
-        } catch (e) { console.error(e); }
+
+            tabela.innerHTML = '';
+
+            if (despesas.length === 0) {
+                tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Nenhuma despesa encontrada para os filtros selecionados.</td></tr>`;
+                return;
+            }
+
+            despesas.forEach(l => {
+                const statusBadge = l.pago
+                    ? '<span class="badge bg-success">Paga</span>'
+                    : '<span class="badge bg-warning text-dark">Em Aberto</span>';
+
+                const categoriaNome = l.categoria ? l.categoria.nome : 'N/A';
+                const centroNome = l.centroCusto ? l.centroCusto.nome : 'Padrão';
+
+                const botoesAcao = l.pago
+                    ? `<button class="btn btn-sm btn-outline-warning fw-bold btn-estornar" data-id="${l.id}" title="Estornar baixa">↩️ Estornar</button>`
+                    : `
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button class="btn btn-success btn-baixar" data-id="${l.id}" title="Baixar título">✅ Baixar</button>
+                            <button class="btn btn-outline-primary btn-editar" data-id="${l.id}" title="Alterar título">✏️</button>
+                            <button class="btn btn-outline-danger btn-excluir" data-id="${l.id}" title="Excluir título">🗑️</button>
+                        </div>
+                      `;
+
+                const line = document.createElement('tr');
+                line.innerHTML = `
+                    <td>${new Date(l.dataVencimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
+                    <td class="fw-bold">
+                        ${l.descricao}
+                        <br><small class="text-muted fw-normal">📁 ${categoriaNome} | 🏢 ${centroNome}</small>
+                    </td>
+                    <td><span class="badge bg-light text-dark border">${l.conta ? l.conta.nome : 'N/A'}</span></td>
+                    <td>${statusBadge}</td>
+                    <td class="text-end fw-bold text-danger">- R$ ${l.valor.toFixed(2)}</td>
+                    <td class="text-center">${botoesAcao}</td>
+                `;
+                tabela.appendChild(line);
+            });
+
+            vincularEventosBotoes(despesas);
+
+        } catch (e) {
+            console.error(e);
+            tabela.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Falha de conexão com a API. Aguarde o servidor acordar e tente novamente.</td></tr>`;
+        }
     }
+
 
     // 7. VINCULA EVENTOS DOS BOTÕES DA TABELA
     function vincularEventosBotoes(despesas) {
