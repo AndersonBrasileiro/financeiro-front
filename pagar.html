@@ -152,7 +152,13 @@
                                     <option value="">Todas as Analíticas</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 col-12 mt-2 d-flex gap-2 justify-content-md-end">
+                            <div class="col-md-3 col-6 mt-2">
+                                <label for="filtroStatus" class="form-label small text-muted mb-1">Status</label>
+                                <select id="filtroStatus" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                    <option value="ABERTO">Em Aberto</option>
+                                    <option value="PAGO">Pagos</option>
+                                </select>
                                 <button type="button" id="btnLimparFiltros" class="btn btn-sm btn-outline-secondary">Limpar</button>
                                 <button type="button" id="btnAplicarFiltros" class="btn btn-sm btn-dark px-3">Filtrar</button>
                             </div>
@@ -182,6 +188,35 @@
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- MODAL DE CONFIRMAÇÃO DE BAIXA COM DATA -->
+    <div class="modal fade" id="modalBaixa" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold">✅ Baixar / Liquidar Despesa</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="baixaLancamentoId">
+                    <p class="mb-2 text-muted small">Você está liquidando o seguinte lançamento:</p>
+                    <div class="p-3 bg-light rounded border mb-3">
+                        <div id="baixaDescricao" class="fw-bold text-dark"></div>
+                        <div id="baixaValor" class="text-danger fw-bold"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="baixaDataPagamento" class="form-label fw-bold">Data Efetiva do Pagamento</label>
+                        <input type="date" id="baixaDataPagamento" class="form-control" required>
+                        <div class="form-text">Sugerida a data de vencimento. Altere caso tenha pago antes ou depois.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnConfirmarBaixaModal" class="btn btn-success fw-bold px-4">Confirmar Pagamento</button>
                 </div>
             </div>
         </div>

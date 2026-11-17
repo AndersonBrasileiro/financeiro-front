@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             exibirAlerta('Erro de comunicação com o servidor.', 'danger');
         }
     });
-    // 5. EVENTOS DOS BOTÕES DE FILTRO E CANCELAR EDIÇÃO
+        // 5. EVENTOS DOS BOTÕES DE FILTRO E CANCELAR EDIÇÃO
     document.getElementById('btnAplicarFiltros').addEventListener('click', () => listarLancamentosPagar());
     document.getElementById('btnLimparFiltros').addEventListener('click', () => {
         document.getElementById('filtroDataInicio').value = '';
@@ -143,11 +143,42 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('filtroConta').value = '';
         document.getElementById('filtroCentroCusto').value = '';
         document.getElementById('filtroCategoria').value = '';
+        document.getElementById('filtroStatus').value = '';
         listarLancamentosPagar();
     });
     document.getElementById('btnCancelarEdicao').addEventListener('click', resetarFormulario);
 
-        // 6. LISTA AS DESPESAS APLICANDO OS FILTROS (COM FALLBACK AUTOMÁTICO)
+    // Evento do botão confirmar dentro do Modal de Baixa
+    document.getElementById('btnConfirmarBaixaModal').addEventListener('click', async () => {
+        const id = document.getElementById('baixaLancamentoId').value;
+        const dataPagamento = document.getElementById('baixaDataPagamento').value;
+        if (!dataPagamento) {
+            alert('Por favor, informe a data do pagamento.');
+            return;
+        }
+
+        const url = `${API_BASE_URL}/lancamentos/${id}/baixar?dataPagamento=${dataPagamento}`;
+        try {
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const modalEl = document.getElementById('modalBaixa');
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) modalInstance.hide();
+
+                exibirAlerta('Título baixado com sucesso!', 'success');
+                carregarDropdownContas();
+                listarLancamentosPagar();
+            } else {
+                const err = await response.json().catch(() => ({}));
+                alert(`Erro ao baixar (HTTP ${response.status}): ${err.message || 'Falha no servidor.'}`);
+            }
+        } catch (e) { console.error(e); }
+    });
+
+    // 6. LISTA AS DESPESAS APLICANDO OS FILTROS
     async function listarLancamentosPagar() {
         const tabela = document.getElementById('tabelaPagar');
         tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Buscando lançamentos...</td></tr>`;
@@ -159,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const contaId = document.getElementById('filtroConta').value;
         const centroCustoId = document.getElementById('filtroCentroCusto').value;
         const categoriaId = document.getElementById('filtroCategoria').value;
+        const statusFiltro = document.getElementById('filtroStatus').value;
 
         if (dataInicio) params.append('dataInicio', dataInicio);
         if (dataFim) params.append('dataFim', dataFim);
@@ -177,14 +209,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 despesas = await response.json();
             } else {
-                console.warn(`Rota /filtrar retornou HTTP ${response.status}. Acionando busca padrão...`);
                 const fallbackResp = await fetch(`${API_BASE_URL}/lancamentos`, {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (!fallbackResp.ok) {
-                    tabela.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Erro ao carregar dados do servidor (HTTP ${fallbackResp.status}). Verifique o deploy da API.</td></tr>`;
+                    tabela.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Erro ao carregar dados (HTTP ${fallbackResp.status}).</td></tr>`;
                     return;
                 }
 
@@ -200,16 +231,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
+            if (statusFiltro === 'ABERTO') {
+                despesas = despesas.filter(l => !l.pago);
+            } else if (statusFiltro === 'PAGO') {
+                despesas = despesas.filter(l => l.pago);
+            }
+
             tabela.innerHTML = '';
 
             if (despesas.length === 0) {
                 tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Nenhuma despesa encontrada para os filtros selecionados.</td></tr>`;
                 return;
             }
-
             despesas.forEach(l => {
                 const statusBadge = l.pago
-                    ? '<span class="badge bg-success">Paga</span>'
+                    ? `<span class="badge bg-success">Paga</span>${l.dataPagamento ? `<br><small class="text-muted" style="font-size:0.7rem;">em ${new Date(l.dataPagamento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</small>` : ''}`
                     : '<span class="badge bg-warning text-dark">Em Aberto</span>';
 
                 const categoriaNome = l.categoria ? l.categoria.nome : 'N/A';
@@ -244,19 +280,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (e) {
             console.error(e);
-            tabela.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Falha de conexão com a API. Aguarde o servidor acordar e tente novamente.</td></tr>`;
+            tabela.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Falha de conexão com a API.</td></tr>`;
         }
     }
-
 
     // 7. VINCULA EVENTOS DOS BOTÕES DA TABELA
     function vincularEventosBotoes(despesas) {
         document.querySelectorAll('.btn-baixar').forEach(btn => {
-            btn.addEventListener('click', () => executarAcaoPut(btn.dataset.id, 'baixar', 'Confirmar a baixa/pagamento desta despesa?'));
+            btn.addEventListener('click', () => {
+                const item = despesas.find(d => d.id == btn.dataset.id);
+                if (!item) return;
+
+                document.getElementById('baixaLancamentoId').value = item.id;
+                document.getElementById('baixaDescricao').textContent = item.descricao;
+                document.getElementById('baixaValor').textContent = `Valor: R$ ${item.valor.toFixed(2)}`;
+                document.getElementById('baixaDataPagamento').value = item.dataVencimento;
+
+                const modalEl = document.getElementById('modalBaixa');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            });
         });
 
         document.querySelectorAll('.btn-estornar').forEach(btn => {
-            btn.addEventListener('click', () => executarAcaoPut(btn.dataset.id, 'estornar', 'Deseja estornar este pagamento? O registro no extrato será removido e o saldo da conta recomposto.'));
+            btn.addEventListener('click', async () => {
+                if (!confirm('Deseja estornar este pagamento? O registro no extrato será removido e o saldo da conta recomposto.')) return;
+                try {
+                    const response = await fetch(`${API_BASE_URL}/lancamentos/${btn.dataset.id}/estornar`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        exibirAlerta('Título estornado com sucesso!', 'success');
+                        carregarDropdownContas();
+                        listarLancamentosPagar();
+                    } else {
+                        const err = await response.json().catch(() => ({}));
+                        exibirAlerta(`Erro no estorno (HTTP ${response.status}): ${err.message || err.error || 'Verifique o servidor.'}`, 'danger');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    exibirAlerta('Erro de rede ao tentar estornar.', 'danger');
+                }
+            });
         });
 
         document.querySelectorAll('.btn-excluir').forEach(btn => {
@@ -270,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
 
     async function executarAcaoPut(id, acao, mensagemConfirmacao) {
         if (!confirm(mensagemConfirmacao)) return;
