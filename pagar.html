@@ -122,7 +122,7 @@
                 </div>
                 <!-- Coluna Direita: Filtros + Tabela de Histórico -->
                 <div class="col-lg-8">
-                    <!-- Painel de Filtros Avançados -->
+                                        <!-- Painel de Filtros Avançados -->
                     <div class="card border-0 shadow-sm p-3 bg-white mb-4">
                         <h6 class="fw-bold text-secondary mb-3">🔍 Filtrar Lançamentos</h6>
                         <div class="row g-2 align-items-end">
@@ -146,6 +146,8 @@
                                     <option value="">Todos</option>
                                 </select>
                             </div>
+
+                            <!-- Segunda Linha Alinhada -->
                             <div class="col-md-6 col-12 mt-2">
                                 <label for="filtroCategoria" class="form-label small text-muted mb-1">Categoria Analítica</label>
                                 <select id="filtroCategoria" class="form-select form-select-sm">
@@ -159,11 +161,14 @@
                                     <option value="ABERTO">Em Aberto</option>
                                     <option value="PAGO">Pagos</option>
                                 </select>
-                                <button type="button" id="btnLimparFiltros" class="btn btn-sm btn-outline-secondary">Limpar</button>
-                                <button type="button" id="btnAplicarFiltros" class="btn btn-sm btn-dark px-3">Filtrar</button>
+                            </div>
+                            <div class="col-md-3 col-6 mt-2 d-flex gap-2 justify-content-end">
+                                <button type="button" id="btnLimparFiltros" class="btn btn-sm btn-outline-secondary w-100">Limpar</button>
+                                <button type="button" id="btnAplicarFiltros" class="btn btn-sm btn-dark w-100">Filtrar</button>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Tabela de Listagem de Despesas -->
                     <div class="card border-0 shadow-sm p-4 bg-white">
