@@ -71,34 +71,49 @@
                 </div>
             </div>
 
-            <!-- Cards de KPIs Financeiros -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm p-3 bg-white h-100">
-                        <span class="text-muted small fw-bold text-uppercase">Saldo Disponível</span>
-                        <h3 id="cardSaldoDisponivel" class="fw-bold text-primary my-2">R$ 0,00</h3>
-                        <small class="text-muted">Total disponível em contas</small>
+            <!-- 📊 CARDS DE RESUMO PRESERVADOS (Grid Bootstrap Estabilizada) -->
+            <div class="row g-3 mb-4">
+                <!-- 1. Saldo Atual Consolidado -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4">
+                            <span class="text-muted small text-uppercase fw-bold">Saldo Disponível</span>
+                            <h3 id="txtSaldoAtual" class="fw-bold text-primary mt-2">R$ 0,00</h3>
+                            <p class="text-muted small mb-0">Total disponível em contas</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm p-3 bg-white h-100">
-                        <span class="text-muted small fw-bold text-uppercase">A Receber (Em Aberto)</span>
-                        <h3 id="cardAReceber" class="fw-bold text-success my-2">R$ 0,00</h3>
-                        <small class="text-muted">Previsão de entradas</small>
+
+                <!-- 2. Contas a Receber em Aberto (Entradas) -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4">
+                            <span class="text-muted small text-uppercase fw-bold">A Receber (Em Aberto)</span>
+                            <h3 id="txtTotalReceber" class="fw-bold text-success mt-2">R$ 0,00</h3>
+                            <p class="text-muted small mb-0">Previsão de entradas</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm p-3 bg-white h-100">
-                        <span class="text-muted small fw-bold text-uppercase">A Pagar (Em Aberto)</span>
-                        <h3 id="cardAPagar" class="fw-bold text-danger my-2">R$ 0,00</h3>
-                        <small class="text-muted">Compromissos pendentes</small>
+
+                <!-- 3. Contas a Pagar em Aberto (Saídas) -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 bg-white">
+                        <div class="card-body p-4">
+                            <span class="text-muted small text-uppercase fw-bold">A Pagar (Em Aberto)</span>
+                            <h3 id="txtTotalPagar" class="fw-bold text-danger mt-2">R$ 0,00</h3>
+                            <p class="text-muted small mb-0">Compromissos pendentes</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm p-3 bg-white h-100">
-                        <span class="text-muted small fw-bold text-uppercase">Saldo Projetado</span>
-                        <h3 id="cardSaldoProjetado" class="fw-bold text-dark my-2">R$ 0,00</h3>
-                        <small class="text-muted">Fluxo estimado consolidado</small>
+
+                <!-- 4. Saldo Projetado -->
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm h-100 bg-dark text-white">
+                        <div class="card-body p-4">
+                            <span class="text-info small text-uppercase fw-bold">Saldo Projetado</span>
+                            <h3 id="txtSaldoProjetado" class="fw-bold text-info mt-2">R$ 0,00</h3>
+                            <p class="text-light-50 small mb-0">Fluxo estimado consolidado</p>
+                        </div>
                     </div>
                 </div>
             </div>
