@@ -103,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
             exibirAlerta('Erro de conexão com o backend.', 'danger');
         }
     }
-
     function extrairDataISO(dataBruta) {
         if (!dataBruta) return '';
         if (Array.isArray(dataBruta)) {
@@ -131,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 let transferencias = await response.json();
 
-                // Aplica o filtro de datas selecionado
                 if (dataInicio) {
                     transferencias = transferencias.filter(t => extrairDataISO(t.dataTransferencia) >= dataInicio);
                 }
@@ -178,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.addEventListener('click', () => excluirTransferencia(btn.dataset.id));
                 });
             } else {
-                tabela.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Erro ao carregar histórico (HTTP ${response.status}). Aguarde o deploy da API e atualize a página.</td></tr>`;
+                tabela.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Erro ao carregar histórico (HTTP ${response.status}).</td></tr>`;
             }
         } catch (error) {
             console.error('Erro ao listar transferências:', error);
