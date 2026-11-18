@@ -122,8 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const tabela = document.getElementById('tabelaTransferencias');
         if (!tabela) return;
 
-        const dataInicio = document.getElementById('filtroDataInicio').value;
-        const dataFim = document.getElementById('filtroDataFim').value;
+        const origemNome = t.contaOrigemNome || (t.contaOrigem ? t.contaOrigem.nome : 'N/A');
+        const destinoNome = t.contaDestinoNome || (t.contaDestino ? t.contaDestino.nome : 'N/A');
+
 
         tabela.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Buscando transferências...</td></tr>`;
 
