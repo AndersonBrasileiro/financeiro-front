@@ -107,22 +107,30 @@
                 </div>
             </div>
 
-            <!-- Painel de Filtro -->
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-body">
-                    <div class="row align-items-end">
-                        <div class="col-md-6 col-12 mb-3 mb-md-0">
-                            <label for="selectContaFiltro" class="form-label fw-bold small text-muted">Filtrar por Conta Bancária</label>
-                            <select id="selectContaFiltro" class="form-select">
-                                <option value="">-- Selecione a Conta --</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 col-12 text-md-end">
-                            <button id="btnFiltrar" class="btn btn-primary px-4">Filtrar Histórico</button>
-                        </div>
+            <!-- Card de Seleção de Conta e Período -->
+            <div class="card border-0 shadow-sm p-3 bg-white mb-4">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-4 col-12">
+                        <label for="selectContaFiltro" class="form-label small fw-bold text-secondary mb-1">Filtrar por Conta Bancária</label>
+                        <select id="selectContaFiltro" class="form-select form-select-sm">
+                            <option value="">-- Selecione a Conta --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label for="filtroDataInicio" class="form-label small fw-bold text-secondary mb-1">Data Inicial</label>
+                        <input type="date" id="filtroDataInicio" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label for="filtroDataFim" class="form-label small fw-bold text-secondary mb-1">Data Final</label>
+                        <input type="date" id="filtroDataFim" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-2 col-12 d-flex gap-2">
+                        <button type="button" id="btnLimparFiltros" class="btn btn-sm btn-outline-secondary w-100">Limpar</button>
+                        <button type="button" id="btnFiltrar" class="btn btn-sm btn-dark w-100 fw-bold">Filtrar</button>
                     </div>
                 </div>
             </div>
+
             <!-- Tabela de Extrato -->
             <div class="card shadow-sm border-0 mb-5">
                 <div class="card-body p-0">

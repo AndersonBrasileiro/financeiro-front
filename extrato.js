@@ -10,8 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarFiltroContas();
     listarMovimentacoes();
 
-    // Ouvinte do botão de filtro
+    // Ouvintes dos botões de filtro
     document.getElementById('btnFiltrar').addEventListener('click', () => {
+        listarMovimentacoes();
+    });
+
+    document.getElementById('btnLimparFiltros').addEventListener('click', () => {
+        document.getElementById('filtroDataInicio').value = '';
+        document.getElementById('filtroDataFim').value = '';
         listarMovimentacoes();
     });
 
@@ -33,15 +39,29 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar filtro de contas', e); }
     }
 
-    // 2. BUSCA E LISTA AS MOVIMENTAÇÕES NA TABELA - MATEMÁTICA DE SALDO PROGRESSIVO
+    // Helper para extrair YYYY-MM-DD com segurança (suporta Array ou String ISO)
+    function extrairDataISO(dataBruta) {
+        if (!dataBruta) return '';
+        if (Array.isArray(dataBruta)) {
+            const [ano, mes, dia] = dataBruta;
+            return `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        }
+        return dataBruta.toString().split('T')[0];
+    }
+
+    // 2. BUSCA E LISTA AS MOVIMENTAÇÕES NA TABELA - MATEMÁTICA DE SALDO PROGRESSIVO + PERÍODO
     async function listarMovimentacoes() {
         const tabela = document.getElementById('tabelaExtrato');
         const contaSelecionadaId = document.getElementById('selectContaFiltro').value;
+        const dataInicio = document.getElementById('filtroDataInicio').value;
+        const dataFim = document.getElementById('filtroDataFim').value;
         
         if (!contaSelecionadaId) {
             tabela.innerHTML = `<tr><td colspan="6" class="text-center text-warning py-4">⚠️ Por favor, selecione uma Conta Bancária específica para visualizar o extrato.</td></tr>`;
             return;
         }
+
+        tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Carregando movimentações...</td></tr>`;
 
         try {
             const response = await fetch(`${API_BASE_URL}/movimentacoes/conta/${contaSelecionadaId}`, {
@@ -50,24 +70,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                const movimentacoes = await response.json();
-                tabela.innerHTML = '';
+                let movimentacoes = await response.json();
 
                 if (movimentacoes.length === 0) {
                     tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Nenhuma movimentação encontrada para esta conta.</td></tr>`;
                     return;
                 }
 
-                // 📈 ALGORITMO BANCÁRIO: Ordena cronologicamente pela data real (mais antigas primeiro) para calcular o saldo progressivo
+                // 1º Passo: Ordena cronologicamente (mais antigas primeiro) para calcular o saldo histórico real
                 movimentacoes.sort((a, b) => {
-                    const dataA = new Date(a.dataHora || a.dataMovimentacao || a.data || 0);
-                    const dataB = new Date(b.dataHora || b.dataMovimentacao || b.data || 0);
-                    return dataA - dataB || a.id - b.id;
+                    const dataA = extrairDataISO(a.dataHora || a.dataMovimentacao || a.data);
+                    const dataB = extrairDataISO(b.dataHora || b.dataMovimentacao || b.data);
+                    return dataA.localeCompare(dataB) || a.id - b.id;
                 });
 
                 let saldoAcumulado = 0;
 
-                // Primeiro passo: Injeta o cálculo do saldo sequencial em cada objeto
                 movimentacoes.forEach(m => {
                     const tipoOriginal = m.tipoMovimentacao || m.tipo || 'SAIDA';
                     const isEntrada = tipoOriginal.toString().toUpperCase() === 'ENTRADA' || tipoOriginal.toString().toUpperCase() === 'RECEITA';
@@ -79,16 +97,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     
                     m.saldoNoMomento = saldoAcumulado;
+                    m.dataISO = extrairDataISO(m.dataHora || m.dataMovimentacao || m.data);
                 });
 
-                // Segundo passo: Inverte a lista para exibir as mais recentes no topo da tabela
+                // 2º Passo: Filtra o período selecionado mantendo o saldo histórico exato de cada movimentação
+                if (dataInicio) {
+                    movimentacoes = movimentacoes.filter(m => m.dataISO >= dataInicio);
+                }
+                if (dataFim) {
+                    movimentacoes = movimentacoes.filter(m => m.dataISO <= dataFim);
+                }
+
+                tabela.innerHTML = '';
+
+                if (movimentacoes.length === 0) {
+                    tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Nenhuma movimentação encontrada para o período selecionado.</td></tr>`;
+                    return;
+                }
+
+                // 3º Passo: Inverte a lista para exibir as mais recentes no topo da tabela
                 movimentacoes.sort((a, b) => {
-                    const dataA = new Date(a.dataHora || a.dataMovimentacao || a.data || 0);
-                    const dataB = new Date(b.dataHora || b.dataMovimentacao || b.data || 0);
-                    return dataB - dataA || b.id - a.id;
+                    return b.dataISO.localeCompare(a.dataISO) || b.id - a.id;
                 });
 
-                // Terceiro passo: Renderiza as linhas na tela
+                // 4º Passo: Renderiza as linhas na tela
                 movimentacoes.forEach(m => {
                     const tipoOriginal = m.tipoMovimentacao || m.tipo || 'SAIDA';
                     const isEntrada = tipoOriginal.toString().toUpperCase() === 'ENTRADA' || tipoOriginal.toString().toUpperCase() === 'RECEITA';
@@ -97,21 +129,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     const badgeCor = isEntrada ? 'bg-success' : 'bg-danger';
                     const valorCor = isEntrada ? 'text-success' : 'text-danger';
                     const sinal = isEntrada ? '+' : '-';
-                    
                     const contaNome = m.conta ? m.conta.nome : 'N/A';
 
-                                        // Formatação segura da data vinda do campo dataHora do Java
-                    const dataBruta = m.dataHora || m.dataMovimentacao || m.data;
                     let dataExibicao = 'N/A';
-                    if (Array.isArray(dataBruta)) {
-                        const [ano, mes, dia] = dataBruta;
-                        dataExibicao = `${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}/${ano}`;
-                    } else if (dataBruta) {
-                        const apenasData = dataBruta.toString().split('T')[0];
-                        const [ano, mes, dia] = apenasData.split('-');
+                    if (m.dataISO) {
+                        const [ano, mes, dia] = m.dataISO.split('-');
                         dataExibicao = `${dia}/${mes}/${ano}`;
                     }
-
 
                     const saldoCor = m.saldoNoMomento >= 0 ? 'text-primary' : 'text-danger';
 
