@@ -237,12 +237,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 despesas = despesas.filter(l => l.pago);
             }
 
+                        // Calcula a soma apenas das despesas filtradas que estão EM ABERTO (!l.pago)
+            const somaEmAberto = despesas
+                .filter(l => !l.pago)
+                .reduce((acumulador, item) => acumulador + item.valor, 0);
+
+            const elTotalAberto = document.getElementById('totalPagarAberto');
+            if (elTotalAberto) {
+                elTotalAberto.textContent = new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(somaEmAberto);
+            }
+
             tabela.innerHTML = '';
 
             if (despesas.length === 0) {
                 tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Nenhuma despesa encontrada para os filtros selecionados.</td></tr>`;
                 return;
             }
+
             despesas.forEach(l => {
                 const statusBadge = l.pago
                     ? `<span class="badge bg-success">Paga</span>${l.dataPagamento ? `<br><small class="text-muted" style="font-size:0.7rem;">em ${new Date(l.dataPagamento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</small>` : ''}`
