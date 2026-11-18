@@ -6,24 +6,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Define a data de hoje como padrão no campo de data
     document.getElementById('inputData').value = new Date().toISOString().split('T')[0];
 
-    // Inicializa a tela buscando as contas do usuário para os seletores
     carregarContasNosSelects();
+    listarTransferencias();
 
-    // Ouvinte do formulário de transferência
     document.getElementById('formTransferencia').addEventListener('submit', async (e) => {
         e.preventDefault();
         executarTransferencia();
     });
 
-    // Botão Cancelar redireciona para o Dashboard
     document.getElementById('btnCancelar').addEventListener('click', () => {
         window.location.href = 'dashboard.html';
     });
 
-    // 1. BUSCA AS CONTAS DO USUÁRIO E PREENCHE OS SELETORES DE ORIGEM E DESTINO
     async function carregarContasNosSelects() {
         const selectOrigem = document.getElementById('selectContaOrigem');
         const selectDestino = document.getElementById('selectContaDestino');
@@ -36,10 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 const contas = await response.json();
-                
-                // Limpa e preenche o select de Origem
                 selectOrigem.innerHTML = '<option value="">-- Selecione a Origem --</option>';
-                // Limpa e preenche o select de Destino
                 selectDestino.innerHTML = '<option value="">-- Selecione o Destino --</option>';
 
                 contas.forEach(c => {
@@ -54,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-        // 2. DISPARA O POST DE TRANSFERÊNCIA PARA O BACKEND JAVA
     async function executarTransferencia() {
         const contaOrigemId = document.getElementById('selectContaOrigem').value;
         const contaDestinoId = document.getElementById('selectContaDestino').value;
@@ -62,19 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = document.getElementById('inputData').value;
         const observacao = document.getElementById('inputObservacao').value;
 
-        // Validação comercial básica
         if (contaOrigemId === contaDestinoId) {
             exibirAlerta('⚠️ A conta de destino não pode ser igual à conta de origem.', 'warning');
             return;
         }
 
-        // 🌟 SINTONIZADO COM O SEU MODEL JAVA: Aninhando os IDs dentro de sub-objetos de Conta
         const dadosTransferencia = {
-            descricao: observacao || "Transferência entre Contas", // Mapeado para 'descricao' no Java
-            valor: valor,                                         // Mapeado para 'valor' no Java
-            dataTransferencia: data,                              // Mapeado para 'dataTransferencia' no Java
-            contaOrigem: { id: parseInt(contaOrigemId) },         // Mapeado para a entidade 'contaOrigem'
-            contaDestino: { id: parseInt(contaDestinoId) }        // Mapeado para a entidade 'contaDestino'
+            descricao: observacao || "Transferência entre Contas",
+            valor: valor,
+            dataTransferencia: data,
+            contaOrigem: { id: parseInt(contaOrigemId) },
+            contaDestino: { id: parseInt(contaDestinoId) }
         };
 
         try {
@@ -88,13 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                exibirAlerta('✅ Transferência executada com sucesso absoluto!', 'success');
+                exibirAlerta('✅ Transferência executada com sucesso!', 'success');
                 document.getElementById('formTransferencia').reset();
                 document.getElementById('inputData').value = new Date().toISOString().split('T')[0];
                 carregarContasNosSelects();
+                listarTransferencias();
             } else {
-                const erroTexto = await response.text();
-                exibirAlerta(`Erro do servidor (Status ${response.status}): ${erroTexto || 'Falha na operação.'}`, 'danger');
+                const err = await response.json().catch(() => ({}));
+                exibirAlerta(`Erro do servidor (Status ${response.status}): ${err.message || 'Falha na operação.'}`, 'danger');
             }
         } catch (error) {
             console.error('Erro na transferência:', error);
@@ -102,19 +93,89 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function listarTransferencias() {
+        const tabela = document.getElementById('tabelaTransferencias');
+        if (!tabela) return;
 
-    // FUNÇÃO AUXILIAR: Exibe alertas dinâmicos na tela
+        try {
+            const response = await fetch(`${API_BASE_URL}/transferencias`, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const transferencias = await response.json();
+                tabela.innerHTML = '';
+
+                if (transferencias.length === 0) {
+                    tabela.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Nenhuma transferência realizada ainda.</td></tr>`;
+                    return;
+                }
+
+                transferencias.forEach(t => {
+                    const origemNome = t.contaOrigem ? t.contaOrigem.nome : 'N/A';
+                    const destinoNome = t.contaDestino ? t.contaDestino.nome : 'N/A';
+
+                    const linha = document.createElement('tr');
+                    linha.innerHTML = `
+                        <td>${new Date(t.dataTransferencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
+                        <td>
+                            <span class="badge bg-light text-danger border">${origemNome}</span>
+                            <span class="mx-1 text-muted">➔</span>
+                            <span class="badge bg-light text-success border">${destinoNome}</span>
+                        </td>
+                        <td class="fw-bold text-dark">${t.descricao || 'Transferência'}</td>
+                        <td class="text-end fw-bold text-primary">R$ ${t.valor.toFixed(2)}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger btn-excluir-transf" data-id="${t.id}" title="Excluir e recompor saldos">🗑️</button>
+                        </td>
+                    `;
+                    tabela.appendChild(linha);
+                });
+
+                document.querySelectorAll('.btn-excluir-transf').forEach(btn => {
+                    btn.addEventListener('click', () => excluirTransferencia(btn.dataset.id));
+                });
+            }
+        } catch (error) {
+            console.error('Erro ao listar transferências:', error);
+        }
+    }
+
+    async function excluirTransferencia(id) {
+        if (!confirm('Deseja realmente excluir esta transferência? Os saldos das duas contas serão recompostos e os registros removidos do extrato.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/transferencias/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                exibirAlerta('✅ Transferência excluída e saldos recompostos com sucesso!', 'success');
+                carregarContasNosSelects();
+                listarTransferencias();
+            } else {
+                const err = await response.json().catch(() => ({}));
+                exibirAlerta(`Erro ao excluir (Status ${response.status}): ${err.message || 'Não foi possível excluir.'}`, 'danger');
+            }
+        } catch (error) {
+            console.error('Erro ao excluir transferência:', error);
+            exibirAlerta('Erro de conexão ao tentar excluir.', 'danger');
+        }
+    }
+
     function exibirAlerta(mensagem, tipo) {
         const alerta = document.getElementById('alertaFeedback');
-        alerta.className = `alert alert-${tipo}`;
+        alerta.className = `alert alert-${tipo} small`;
         alerta.innerText = mensagem;
         alerta.classList.remove('d-none');
-        
-        // Rola a página suavemente para o topo do formulário para ver o aviso no celular
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    document.getElementById('btnSair').addEventListener('click', () => {
+    document.getElementById('btnSair')?.addEventListener('click', () => {
         localStorage.removeItem('token_financas');
         window.location.href = 'index.html';
     });
