@@ -109,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             exibirAlerta('Erro de conexão com o backend.', 'danger');
         }
     }
+
     function extrairDataISO(dataBruta) {
         if (!dataBruta) return '';
         if (Array.isArray(dataBruta)) {
@@ -117,14 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return dataBruta.toString().slice(0, 10);
     }
-
     async function listarTransferencias() {
         const tabela = document.getElementById('tabelaTransferencias');
         if (!tabela) return;
 
-        const origemNome = t.contaOrigemNome || (t.contaOrigem ? t.contaOrigem.nome : 'N/A');
-        const destinoNome = t.contaDestinoNome || (t.contaDestino ? t.contaDestino.nome : 'N/A');
-
+        const dataInicio = document.getElementById('filtroDataInicio').value;
+        const dataFim = document.getElementById('filtroDataFim').value;
 
         tabela.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Buscando transferências...</td></tr>`;
 
@@ -152,8 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 transferencias.forEach(t => {
-                    const origemNome = t.contaOrigem ? t.contaOrigem.nome : 'N/A';
-                    const destinoNome = t.contaDestino ? t.contaDestino.nome : 'N/A';
+                    const origemNome = t.contaOrigemNome || (t.contaOrigem ? t.contaOrigem.nome : 'N/A');
+                    const destinoNome = t.contaDestinoNome || (t.contaDestino ? t.contaDestino.nome : 'N/A');
 
                     const dataISO = extrairDataISO(t.dataTransferencia);
                     let dataExibicao = 'N/A';
