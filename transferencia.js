@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    const hojeISO = new Date().toISOString().split('T');
+    const hojeISO = new Date().toISOString().slice(0, 10);
     document.getElementById('inputData').value = hojeISO;
 
     carregarContasNosSelects();
@@ -40,6 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem('token_financas');
+                window.location.href = 'index.html';
+                return;
+            }
 
             if (response.ok) {
                 const contas = await response.json();
@@ -91,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 exibirAlerta('✅ Transferência executada com sucesso!', 'success');
                 document.getElementById('formTransferencia').reset();
-                document.getElementById('inputData').value = new Date().toISOString().split('T');
+                document.getElementById('inputData').value = new Date().toISOString().slice(0, 10);
                 carregarContasNosSelects();
                 listarTransferencias();
             } else {
@@ -109,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const [ano, mes, dia] = dataBruta;
             return `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
         }
-        return dataBruta.toString().split('T');
+        return dataBruta.toString().slice(0, 10);
     }
 
     async function listarTransferencias() {
