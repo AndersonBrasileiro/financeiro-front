@@ -11,7 +11,7 @@
 
 <body class="bg-light">
 
-    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR (Responsivo) -->
+    <!-- 📱 MENU SUPERIOR EXCLUSIVO PARA CELULAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-lg-none">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="dashboard.html">🚀 Finanças ERP</a>
@@ -29,7 +29,7 @@
                     <hr class="dropdown-divider bg-secondary my-2">
                     <div class="text-muted small px-3 py-1 text-uppercase fw-bold" style="letter-spacing: 0.05rem;">⚙️ Cadastros</div>
                     <a class="nav-link" href="contas.html">🏦 Contas Bancárias</a>
-                    <a class="nav-link" href="centros-custos.html">🏢 Centros de Custo</a>
+                    <a class="nav-link" href="centros.html">🏢 Centros de Custo</a>
                     <a class="nav-link" href="categorias.html">🏷️ Categorias</a>
                     <hr class="dropdown-divider bg-light my-3">
                     <button id="btnSairCelular" class="btn btn-danger btn-sm m-3">Sair do Sistema</button>
@@ -38,52 +38,25 @@
         </div>
     </nav>
 
-    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE (Computador) -->
+    <!-- 💻 BARRA LATERAL RETRÁTIL ESTILO SUPABASE -->
     <div class="sidebar-supabase">
-        <a href="dashboard.html" class="text-decoration-none d-block py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem; transition: background 0.2s;">
+        <a href="dashboard.html" class="text-decoration-none d-block py-4 px-4 text-white fw-bold border-bottom border-secondary" style="font-size: 1.2rem;">
             🚀 <span class="ms-2">ERP</span>
         </a>
         <div class="pt-3">
             <div class="sidebar-heading">💰 Financeiro</div>
-            <a href="dashboard.html" class="nav-sidebar-link">
-                <span class="menu-icon">📊</span>
-                <span class="menu-text">Visão Geral / Dashboard</span>
-            </a>
-            <a href="pagar.html" class="nav-sidebar-link">
-                <span class="menu-icon">📄</span>
-                <span class="menu-text">Contas a Pagar</span>
-            </a>
-            <a href="receber.html" class="nav-sidebar-link">
-                <span class="menu-icon">💵</span>
-                <span class="menu-text">Contas a Receber</span>
-            </a>
-            <a href="transferencia.html" class="nav-sidebar-link">
-                <span class="menu-icon">💸</span>
-                <span class="menu-text">Transferências</span>
-            </a>
-            <a href="extrato.html" class="nav-sidebar-link">
-                <span class="menu-icon">📋</span>
-                <span class="menu-text">Extrato Interno</span>
-            </a>
+            <a href="dashboard.html" class="nav-sidebar-link"><span class="menu-icon">📊</span><span class="menu-text">Visão Geral / Dashboard</span></a>
+            <a href="pagar.html" class="nav-sidebar-link"><span class="menu-icon">📄</span><span class="menu-text">Contas a Pagar</span></a>
+            <a href="receber.html" class="nav-sidebar-link"><span class="menu-icon">💵</span><span class="menu-text">Contas a Receber</span></a>
+            <a href="transferencia.html" class="nav-sidebar-link"><span class="menu-icon">💸</span><span class="menu-text">Transferências</span></a>
+            <a href="extrato.html" class="nav-sidebar-link"><span class="menu-icon">📋</span><span class="menu-text">Extrato Interno</span></a>
             <div class="my-3"></div>
             <div class="sidebar-heading">⚙️ Cadastros</div>
-            <a href="contas.html" class="nav-sidebar-link">
-                <span class="menu-icon">🏦</span>
-                <span class="menu-text">Contas Bancárias</span>
-            </a>
-            <a href="centros.html" class="nav-sidebar-link">
-                <span class="menu-icon">🏢</span>
-                <span class="menu-text">Centros de Custo</span>
-            </a>
-            <a href="categorias.html" class="nav-sidebar-link">
-                <span class="menu-icon">🏷️</span>
-                <span class="menu-text">Categorias</span>
-            </a>
+            <a href="contas.html" class="nav-sidebar-link"><span class="menu-icon">🏦</span><span class="menu-text">Contas Bancárias</span></a>
+            <a href="centros.html" class="nav-sidebar-link"><span class="menu-icon">🏢</span><span class="menu-text">Centros de Custo</span></a>
+            <a href="categorias.html" class="nav-sidebar-link"><span class="menu-icon">🏷️</span><span class="menu-text">Categorias</span></a>
             <div class="border-top border-secondary mt-4 pt-3">
-                <a href="#" id="btnSair" class="nav-sidebar-link text-danger">
-                    <span class="menu-icon">🚪</span>
-                    <span class="menu-text">Sair do Sistema</span>
-                </a>
+                <a href="#" id="btnSair" class="nav-sidebar-link text-danger"><span class="menu-icon">🚪</span><span class="menu-text">Sair do Sistema</span></a>
             </div>
         </div>
     </div>
@@ -99,14 +72,18 @@
             </div>
 
             <div class="row g-4">
-                <!-- Formulário Lateral de Inclusão de Receitas -->
-                <div class="col-md-4">
+                <!-- Formulário Lateral de Inclusão / Edição -->
+                <div class="col-lg-4">
                     <div class="card border-0 shadow-sm p-4 bg-white">
-                        <h5 class="fw-bold text-success mb-3">Nova Receita</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 id="tituloFormulario" class="fw-bold text-success mb-0">Nova Receita</h5>
+                            <button type="button" id="btnCancelarEdicao" class="btn btn-sm btn-outline-secondary d-none">Cancelar Edição</button>
+                        </div>
                         <form id="formReceber">
+                            <input type="hidden" id="lancamentoId">
                             <div class="mb-3">
                                 <label for="descricao" class="form-label">Descrição da Receita</label>
-                                <input type="text" id="descricao" class="form-control" placeholder="Ex: Salário, Venda de Produto" required>
+                                <input type="text" id="descricao" class="form-control" placeholder="Ex: Salário, Venda, Rendimentos" required>
                             </div>
                             <div class="mb-3">
                                 <label for="valor" class="form-label">Valor (R$)</label>
@@ -124,7 +101,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="selectCentroCusto" class="form-label">Centro de Custo / Destinação</label>
-                                <select id="selectCentroCusto" class="form-control" required>
+                                <select id="selectCentroCusto" class="form-control">
                                     <option value="">Carregando centros de custo...</option>
                                 </select>
                             </div>
@@ -134,17 +111,65 @@
                                     <option value="">Carregando categorias...</option>
                                 </select>
                             </div>
-                            <div class="mb-3 form-check form-switch">
+                            <div id="boxCheckRecebido" class="mb-3 form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="recebido">
-                                <label class="form-check-input-label fw-bold text-success" for="recebido">Marcar como RECEBIDA (Liquidar agora)</label>
+                                <label class="form-check-label fw-bold text-success" for="recebido">Marcar como RECEBIDA (Liquidar agora)</label>
                             </div>
                             <div id="mensagemAlerta" class="alert d-none small" role="alert"></div>
-                            <button type="submit" class="btn btn-success w-100 fw-bold py-2 mt-2">Salvar Receita</button>
+                            <button type="submit" id="btnSalvarReceber" class="btn btn-success w-100 fw-bold py-2 mt-2">Salvar Receita</button>
                         </form>
                     </div>
                 </div>
-                <!-- Tabela de Listagem de Receitas -->
-                <div class="col-md-8">
+                <!-- Coluna Direita: Filtros + Tabela de Histórico -->
+                <div class="col-lg-8">
+                    <!-- Painel de Filtros Avançados -->
+                    <div class="card border-0 shadow-sm p-3 bg-white mb-4">
+                        <h6 class="fw-bold text-secondary mb-3">🔍 Filtrar Lançamentos</h6>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-3 col-6">
+                                <label for="filtroDataInicio" class="form-label small text-muted mb-1">Data Inicial</label>
+                                <input type="date" id="filtroDataInicio" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="filtroDataFim" class="form-label small text-muted mb-1">Data Final</label>
+                                <input type="date" id="filtroDataFim" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="filtroConta" class="form-label small text-muted mb-1">Conta de Entrada</label>
+                                <select id="filtroConta" class="form-select form-select-sm">
+                                    <option value="">Todas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <label for="filtroCentroCusto" class="form-label small text-muted mb-1">Centro de Custo</label>
+                                <select id="filtroCentroCusto" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+
+                            <!-- Segunda Linha Alinhada -->
+                            <div class="col-md-6 col-12 mt-2">
+                                <label for="filtroCategoria" class="form-label small text-muted mb-1">Categoria Analítica</label>
+                                <select id="filtroCategoria" class="form-select form-select-sm">
+                                    <option value="">Todas as Analíticas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-6 mt-2">
+                                <label for="filtroStatus" class="form-label small text-muted mb-1">Status</label>
+                                <select id="filtroStatus" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                    <option value="ABERTO">A Receber</option>
+                                    <option value="PAGO">Recebidos</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-6 mt-2 d-flex gap-2 justify-content-end">
+                                <button type="button" id="btnLimparFiltros" class="btn btn-sm btn-outline-secondary w-100">Limpar</button>
+                                <button type="button" id="btnAplicarFiltros" class="btn btn-sm btn-dark w-100">Filtrar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Listagem de Receitas -->
                     <div class="card border-0 shadow-sm p-4 bg-white">
                         <h5 class="fw-bold text-secondary mb-3">Histórico de Contas a Receber</h5>
                         <div class="table-responsive">
@@ -156,20 +181,57 @@
                                         <th>Conta de Entrada</th>
                                         <th>Status</th>
                                         <th class="text-end">Valor</th>
+                                        <th class="text-center">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabelaReceber">
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted py-4">Nenhum lançamento encontrado.</td>
+                                        <td colspan="6" class="text-center text-muted py-4">Carregando lançamentos...</td>
                                     </tr>
                                 </tbody>
+                                <tfoot class="table-light border-top">
+                                    <tr>
+                                        <td colspan="4" class="text-end fw-bold text-secondary">Total a Receber (Filtrado):</td>
+                                        <td id="totalReceberAberto" class="text-end fw-bold text-success fs-6">R$ 0,00</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
                 </div>
-            </div> <!-- Fecha a row g-4 -->
-        </div> <!-- Fecha o container-fluid -->
-    </div> <!-- Fecha o content-wrapper -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO DE RECEBIMENTO COM DATA -->
+    <div class="modal fade" id="modalBaixa" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold">✅ Baixar / Confirmar Recebimento</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="baixaLancamentoId">
+                    <p class="mb-2 text-muted small">Você está confirmando o recebimento do seguinte lançamento:</p>
+                    <div class="p-3 bg-light rounded border mb-3">
+                        <div id="baixaDescricao" class="fw-bold text-dark"></div>
+                        <div id="baixaValor" class="text-success fw-bold"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="baixaDataPagamento" class="form-label fw-bold">Data Efetiva do Recebimento</label>
+                        <input type="date" id="baixaDataPagamento" class="form-control" required>
+                        <div class="form-text">Sugerida a data prevista. Altere caso tenha recebido antes ou depois.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnConfirmarBaixaModal" class="btn btn-success fw-bold px-4">Confirmar Recebimento</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="config.js"></script>
     <script>
@@ -178,7 +240,7 @@
             if (!token) { window.location.href = 'index.html'; return; }
 
             const efetuarLogout = (e) => {
-                if(e) e.preventDefault();
+                if (e) e.preventDefault();
                 localStorage.removeItem('token_financas');
                 window.location.href = 'index.html';
             };
