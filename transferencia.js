@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    document.getElementById('inputData').value = new Date().toISOString().split('T')[0];
+    const hojeISO = new Date().toISOString().split('T');
+    document.getElementById('inputData').value = hojeISO;
 
     carregarContasNosSelects();
     listarTransferencias();
@@ -18,6 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btnCancelar').addEventListener('click', () => {
         window.location.href = 'dashboard.html';
+    });
+
+    document.getElementById('btnFiltrar').addEventListener('click', () => {
+        listarTransferencias();
+    });
+
+    document.getElementById('btnLimparFiltros').addEventListener('click', () => {
+        document.getElementById('filtroDataInicio').value = '';
+        document.getElementById('filtroDataFim').value = '';
+        listarTransferencias();
     });
 
     async function carregarContasNosSelects() {
@@ -80,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 exibirAlerta('✅ Transferência executada com sucesso!', 'success');
                 document.getElementById('formTransferencia').reset();
-                document.getElementById('inputData').value = new Date().toISOString().split('T')[0];
+                document.getElementById('inputData').value = new Date().toISOString().split('T');
                 carregarContasNosSelects();
                 listarTransferencias();
             } else {
@@ -93,9 +104,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function extrairDataISO(dataBruta) {
+        if (!dataBruta) return '';
+        if (Array.isArray(dataBruta)) {
+            const [ano, mes, dia] = dataBruta;
+            return `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        }
+        return dataBruta.toString().split('T');
+    }
+
     async function listarTransferencias() {
         const tabela = document.getElementById('tabelaTransferencias');
         if (!tabela) return;
+
+        const dataInicio = document.getElementById('filtroDataInicio').value;
+        const dataFim = document.getElementById('filtroDataFim').value;
+
+        tabela.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Buscando transferências...</td></tr>`;
 
         try {
             const response = await fetch(`${API_BASE_URL}/transferencias`, {
@@ -104,11 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                const transferencias = await response.json();
+                let transferencias = await response.json();
+
+                // Aplica o filtro de datas selecionado
+                if (dataInicio) {
+                    transferencias = transferencias.filter(t => extrairDataISO(t.dataTransferencia) >= dataInicio);
+                }
+                if (dataFim) {
+                    transferencias = transferencias.filter(t => extrairDataISO(t.dataTransferencia) <= dataFim);
+                }
+
                 tabela.innerHTML = '';
 
                 if (transferencias.length === 0) {
-                    tabela.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Nenhuma transferência realizada ainda.</td></tr>`;
+                    tabela.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Nenhuma transferência encontrada para o período.</td></tr>`;
                     return;
                 }
 
@@ -116,9 +150,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     const origemNome = t.contaOrigem ? t.contaOrigem.nome : 'N/A';
                     const destinoNome = t.contaDestino ? t.contaDestino.nome : 'N/A';
 
+                    const dataISO = extrairDataISO(t.dataTransferencia);
+                    let dataExibicao = 'N/A';
+                    if (dataISO) {
+                        const [ano, mes, dia] = dataISO.split('-');
+                        dataExibicao = `${dia}/${mes}/${ano}`;
+                    }
+
                     const linha = document.createElement('tr');
                     linha.innerHTML = `
-                        <td>${new Date(t.dataTransferencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
+                        <td>${dataExibicao}</td>
                         <td>
                             <span class="badge bg-light text-danger border">${origemNome}</span>
                             <span class="mx-1 text-muted">➔</span>
@@ -136,9 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.btn-excluir-transf').forEach(btn => {
                     btn.addEventListener('click', () => excluirTransferencia(btn.dataset.id));
                 });
+            } else {
+                tabela.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Erro ao carregar histórico (HTTP ${response.status}). Aguarde o deploy da API e atualize a página.</td></tr>`;
             }
         } catch (error) {
             console.error('Erro ao listar transferências:', error);
+            tabela.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Falha de conexão com o servidor.</td></tr>`;
         }
     }
 

@@ -109,17 +109,28 @@
                         </form>
                     </div>
                 </div>
-                <!-- Coluna Direita: Regra Transacional + Histórico com Exclusão -->
+                <!-- Coluna Direita: Filtro de Datas + Histórico com Exclusão -->
                 <div class="col-lg-7">
-                    <div class="card border-0 shadow-sm p-4 bg-white mb-4">
-                        <h5 class="fw-bold text-dark mb-2">Regra Transacional Rígida</h5>
-                        <p class="text-muted small mb-2">Ao confirmar ou excluir uma operação, o sistema garante a integridade contábil automaticamente:</p>
-                        <ul class="small text-secondary mb-0">
-                            <li><strong>Ao Transferir:</strong> Debita da origem, credita no destino e registra as 2 movimentações no Extrato Interno.</li>
-                            <li><strong>Ao Excluir:</strong> Recompõe o saldo da conta de origem, desconta da conta de destino e remove as movimentações do extrato.</li>
-                        </ul>
+                    <!-- Painel de Filtro de Período -->
+                    <div class="card border-0 shadow-sm p-3 bg-white mb-4">
+                        <h6 class="fw-bold text-secondary mb-3">🔍 Filtrar Transferências por Período</h6>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-4 col-6">
+                                <label for="filtroDataInicio" class="form-label small text-muted mb-1">Data Inicial</label>
+                                <input type="date" id="filtroDataInicio" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-4 col-6">
+                                <label for="filtroDataFim" class="form-label small text-muted mb-1">Data Final</label>
+                                <input type="date" id="filtroDataFim" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-4 col-12 d-flex gap-2">
+                                <button type="button" id="btnLimparFiltros" class="btn btn-sm btn-outline-secondary w-100">Limpar</button>
+                                <button type="button" id="btnFiltrar" class="btn btn-sm btn-dark w-100 fw-bold">Filtrar</button>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- Tabela de Histórico -->
                     <div class="card border-0 shadow-sm p-4 bg-white">
                         <h5 class="fw-bold text-secondary mb-3">📋 Histórico de Transferências</h5>
                         <div class="table-responsive">
@@ -167,3 +178,4 @@
 </body>
 
 </html>
+
