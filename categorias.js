@@ -13,21 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('formCategoria').addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const nome = document.getElementById('nomeCategoria').value;
+        const nome = document.getElementById('nomeCategoria').value.trim();
         const valorSelecionado = document.getElementById('tipoCategoria').value;
         const categoriaPaiId = document.getElementById('selectCategoriaPai').value;
         const alerta = document.getElementById('mensagemAlerta');
 
         alerta.classList.add('d-none');
 
-        // Mapeamento triplo preventivo para casar com qualquer nome de atributo da sua Entidade Java
         const payload = {
             nome: nome,
             fluxo: valorSelecionado,
             tipo: valorSelecionado
         };
 
-        // Se o usuário escolheu um pai no seletor, anexa o objeto relacional
         if (categoriaPaiId) {
             const objRelacional = { id: parseInt(categoriaPaiId) };
             payload.categoriaPai = objRelacional;
@@ -51,21 +49,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 alerta.classList.add('alert-success');
                 document.getElementById('formCategoria').reset();
                 listarCategorias();
-                carregarDropdownCategoriasPai(); // Atualiza o seletor com a nova pai
+                carregarDropdownCategoriasPai();
             } else {
-                const err = await response.json();
-                alerta.textContent = err.mensagem || 'Erro ao salvar a categoria.';
-                alerta.classList.remove('d-none');
+                const err = await response.json().catch(() => ({}));
+                alerta.textContent = err.mensagem || err.message || 'Erro ao salvar a categoria.';
+                alerta.classList.remove('d-none', 'alert-success');
                 alerta.classList.add('alert-danger');
             }
         } catch (error) {
             alerta.textContent = 'Erro de conexão com o servidor.';
-            alerta.classList.remove('d-none');
+            alerta.classList.remove('d-none', 'alert-success');
             alerta.classList.add('alert-danger');
         }
     });
 
-    // 2. LISTAR TODAS AS CATEGORIAS NA TABELA
+    // Helper para identificar o objeto pai em qualquer nomenclatura da API
+    function obterCategoriaPai(categoria) {
+        return categoria.categoriaPai || categoria.pai || categoria.categoriaPrincipal || null;
+    }
+
+    // Ordena em árvore: Pais em ordem alfabética e suas Filhas logo abaixo em ordem alfabética
+    function organizarCategoriasEmArvore(listaCategorias) {
+        const pais = listaCategorias
+            .filter(c => !obterCategoriaPai(c))
+            .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+
+        const arvore = [];
+
+        pais.forEach(pai => {
+            arvore.push({ ...pai, ehFilha: false });
+
+            const filhas = listaCategorias
+                .filter(c => {
+                    const objPai = obterCategoriaPai(c);
+                    return objPai && objPai.id === pai.id;
+                })
+                .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+
+            filhas.forEach(filha => {
+                arvore.push({ ...filha, ehFilha: true, nomePai: pai.nome });
+            });
+        });
+
+        // Garante que eventuais categorias órfãs apareçam ao final em ordem alfabética
+        const idsProcessados = new Set(arvore.map(item => item.id));
+        listaCategorias
+            .filter(c => !idsProcessados.has(c.id))
+            .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }))
+            .forEach(orfa => {
+                const objPai = obterCategoriaPai(orfa);
+                arvore.push({ ...orfa, ehFilha: Boolean(objPai), nomePai: objPai ? objPai.nome : '' });
+            });
+
+        return arvore;
+    }
+
+    // 2. LISTAR TODAS AS CATEGORIAS NA TABELA EM ÁRVORE ALFABÉTICA
     async function listarCategorias() {
         const tabela = document.getElementById('tabelaCategorias');
         try {
@@ -73,6 +112,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem('token_financas');
+                window.location.href = 'index.html';
+                return;
+            }
 
             if (response.ok) {
                 const categorias = await response.json();
@@ -83,21 +128,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                categorias.forEach(c => {
+                const categoriasOrdenadas = organizarCategoriasEmArvore(categorias);
+
+                categoriasOrdenadas.forEach(c => {
                     const valorFluxo = c.fluxo || c.tipo || 'DESPESA';
                     const tipoTexto = (valorFluxo.toString().toUpperCase() === 'RECEITA') ? 'Receita' : 'Custo';
                     const badgeCor = tipoTexto === 'Receita' ? 'bg-success' : 'bg-danger';
 
-                    // Verifica de forma segura se há um objeto pai associado em qualquer nomenclatura
-                    const objetoPai = c.categoriaPai || c.pai || c.categoriaPrincipal;
-
-                    const nomeExibicao = objetoPai
-                        ? `${c.nome} <small class="text-muted">(Sub de ${objetoPai.nome})</small>`
-                        : `📁 <b>${c.nome}</b>`;
+                    const nomeExibicao = c.ehFilha
+                        ? `<span class="ms-4 text-secondary">↳ ${c.nome}</span>`
+                        : `📁 <strong class="text-dark">${c.nome}</strong>`;
 
                     const linha = document.createElement('tr');
+                    if (!c.ehFilha) {
+                        linha.classList.add('table-light');
+                    }
+
                     linha.innerHTML = `
-                        <td><span class="badge bg-secondary">${c.id}</span></td>
+                        <td><span class="badge ${c.ehFilha ? 'bg-light text-secondary border' : 'bg-secondary'}">${c.id}</span></td>
                         <td>${nomeExibicao}</td>
                         <td><span class="badge ${badgeCor}">${tipoTexto}</span></td>
                     `;
@@ -112,12 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 3. ATUALIZADO COM VALIDAÇÃO: Carrega as categorias pai filtrando estritamente pelo Tipo selecionado
+    // 3. CARREGA AS CATEGORIAS PAI EM ORDEM ALFABÉTICA FILTRANDO PELO TIPO
     async function carregarDropdownCategoriasPai() {
         const select = document.getElementById('selectCategoriaPai');
         if (!select) return;
 
-        // Captura o tipo selecionado pelo usuário no momento (CUSTO ou RECEITA)
         const tipoSelecionado = document.getElementById('tipoCategoria').value;
 
         try {
@@ -130,35 +177,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 const todasCategorias = await response.json();
                 select.innerHTML = '<option value="">-- Nenhuma (Esta será uma Categoria Pai) --</option>';
 
-                todasCategorias.forEach(cat => {
-                    const objetoPai = cat.categoriaPai || cat.pai || cat.categoriaPrincipal;
-
-                    // Só vira opção se for Pai (objetoPai é null) E se o tipo for IGUAL ao selecionado na tela
-                    if (!objetoPai) {
+                const paisFiltrados = todasCategorias
+                    .filter(cat => {
+                        if (obterCategoriaPai(cat)) return false;
                         const valorFluxo = cat.tipo || cat.fluxo || 'DESPESA';
+                        return valorFluxo.toString().toUpperCase() === tipoSelecionado.toString().toUpperCase();
+                    })
+                    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
 
-                        // Garante que o agrupador bata exatamente com o tipo selecionado
-                        if (valorFluxo.toString().toUpperCase() === tipoSelecionado.toString().toUpperCase()) {
-                            const tipoTexto = valorFluxo.toString().toUpperCase() === 'RECEITA' ? 'Receita' : 'Custo';
-                            select.innerHTML += `<option value="${cat.id}">${cat.nome} (${tipoTexto})</option>`;
-                        }
-                    }
+                paisFiltrados.forEach(cat => {
+                    const valorFluxo = cat.tipo || cat.fluxo || 'DESPESA';
+                    const tipoTexto = valorFluxo.toString().toUpperCase() === 'RECEITA' ? 'Receita' : 'Custo';
+                    select.innerHTML += `<option value="${cat.id}">${cat.nome} (${tipoTexto})</option>`;
                 });
             }
-        } catch (e) { console.error('Erro ao carregar seletor de categorias principais:', e); }
+        } catch (e) {
+            console.error('Erro ao carregar seletor de categorias principais:', e);
+        }
     }
 
-    // 🌟 GATILHO DE INTEGRIDADE: Toda vez que o usuário mudar o Tipo (Custo/Receita), 
-    // atualiza o dropdown de pais para esconder as opções incompatíveis!
     document.getElementById('tipoCategoria').addEventListener('change', () => {
         carregarDropdownCategoriasPai();
     });
 
-
-
-    document.getElementById('btnSair').addEventListener('click', () => {
+    document.getElementById('btnSair')?.addEventListener('click', () => {
         localStorage.removeItem('token_financas');
         window.location.href = 'index.html';
     });
 });
-
