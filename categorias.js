@@ -315,5 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnSair')?.addEventListener('click', () => {
         localStorage.removeItem('token_financas');
         window.location.href = 'index.html';
+        
     });
 });
