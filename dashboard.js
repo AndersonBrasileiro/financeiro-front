@@ -43,10 +43,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const despesas = respDespesas.ok ? await respDespesas.json() : [];
             const receitas = respReceitas.ok ? await respReceitas.json() : [];
 
-            renderizarGraficoMensal(receitas, despesas);
-            renderizarGraficoCategorias(despesas);
-        } else {
-            console.error('Biblioteca Chart.js não foi carregada no dashboard.html.');
+            const mesReferencia = descobrirMesReferencia([...receitas, ...despesas]);
+            renderizarGraficoMensal(receitas, despesas, mesReferencia);
+            inicializarSeletorEGraficoCategorias(despesas, mesReferencia);
         }
 
     } catch (error) {
@@ -54,17 +53,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// GRÁFICO 1: BARRAS AGRUPADAS (RECEITAS X DESPESAS DOS ÚLTIMOS 6 MESES)
-function renderizarGraficoMensal(receitas, despesas) {
+// Descobre o mês mais recente com lançamentos (ou usa o mês atual do sistema)
+function descobrirMesReferencia(todosLancamentos) {
+    const hoje = new Date();
+    const chaveHoje = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+
+    const datasValidas = todosLancamentos
+        .map(l => l.dataVencimento)
+        .filter(d => typeof d === 'string' && d.length >= 7)
+        .sort();
+
+    if (datasValidas.length === 0) return chaveHoje;
+
+    const temNoMesAtual = datasValidas.some(d => d.startsWith(chaveHoje));
+    return temNoMesAtual ? chaveHoje : datasValidas[datasValidas.length - 1].substring(0, 7);
+}
+// GRÁFICO 1: BARRAS AGRUPADAS (RECEITAS X DESPESAS - JANELA DE 6 MESES)
+function renderizarGraficoMensal(receitas, despesas, mesReferencia) {
     const canvas = document.getElementById('graficoMensal');
     if (!canvas) return;
 
-    const hoje = new Date();
+    const [anoRef, mesRef] = mesReferencia.split('-').map(Number);
+    const dataBase = new Date(anoRef, mesRef - 1, 1);
     const meses = [];
     const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
     for (let i = 5; i >= 0; i--) {
-        const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+        const d = new Date(dataBase.getFullYear(), dataBase.getMonth() - i, 1);
         const ano = d.getFullYear();
         const mes = String(d.getMonth() + 1).padStart(2, '0');
         meses.push({
@@ -131,24 +146,69 @@ function renderizarGraficoMensal(receitas, despesas) {
     });
 }
 
-// GRÁFICO 2: ROSCA (DESPESAS POR CATEGORIA NO MÊS ATUAL)
-function renderizarGraficoCategorias(despesas) {
+// GRÁFICO 2: ROSCA COM SELETOR DE MÊS (DESPESAS POR CATEGORIA)
+let chartCategoriasInstance = null;
+
+function inicializarSeletorEGraficoCategorias(despesas, mesInicial) {
+    const subtitulo = document.getElementById('subtituloCategoriaMes');
+    const mesesDisponiveis = [...new Set(
+        despesas
+            .filter(d => typeof d.dataVencimento === 'string' && d.dataVencimento.length >= 7)
+            .map(d => d.dataVencimento.substring(0, 7))
+    )].sort().reverse();
+
+    if (mesesDisponiveis.length === 0) {
+        renderizarGraficoCategorias(despesas, mesInicial);
+        return;
+    }
+
+    const mesSelecionado = mesesDisponiveis.includes(mesInicial) ? mesInicial : mesesDisponiveis;
+
+    if (subtitulo && subtitulo.parentElement && subtitulo.parentElement.parentElement) {
+        const headerCard = subtitulo.parentElement.parentElement;
+        const selectMes = document.createElement('select');
+        selectMes.className = 'form-select form-select-sm w-auto';
+        selectMes.style.fontSize = '0.8rem';
+
+        const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        mesesDisponiveis.forEach(chave => {
+            const [ano, mes] = chave.split('-');
+            const opt = document.createElement('option');
+            opt.value = chave;
+            opt.textContent = `${nomesMeses[parseInt(mes, 10) - 1]}/${ano}`;
+            if (chave === mesSelecionado) opt.selected = true;
+            selectMes.appendChild(opt);
+        });
+
+        selectMes.addEventListener('change', () => {
+            renderizarGraficoCategorias(despesas, selectMes.value);
+        });
+
+        headerCard.appendChild(selectMes);
+        subtitulo.textContent = 'Distribuição por categoria';
+    }
+
+    renderizarGraficoCategorias(despesas, mesSelecionado);
+}
+
+function renderizarGraficoCategorias(despesas, chaveMes) {
     const canvas = document.getElementById('graficoCategorias');
     const msgVazio = document.getElementById('msgSemDespesasGrafico');
     if (!canvas) return;
 
-    const hoje = new Date();
-    const chaveMesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-
     const agrupado = {};
     despesas.forEach(l => {
-        if (!l.dataVencimento || !l.dataVencimento.startsWith(chaveMesAtual)) return;
+        if (!l.dataVencimento || !l.dataVencimento.startsWith(chaveMes)) return;
 
         const nomeCategoria = l.categoria ? l.categoria.nome : 'Sem Categoria';
         agrupado[nomeCategoria] = (agrupado[nomeCategoria] || 0) + Number(l.valor || 0);
     });
 
-    const entradas = Object.entries(agrupado).sort((a, b) => b[1] - a[1]);
+    const entradas = Object.entries(agrupado).sort((a, b) => b - a);
+
+    if (chartCategoriasInstance) {
+        chartCategoriasInstance.destroy();
+    }
 
     if (entradas.length === 0) {
         canvas.parentElement.classList.add('d-none');
@@ -156,18 +216,21 @@ function renderizarGraficoCategorias(despesas) {
         return;
     }
 
+    canvas.parentElement.classList.remove('d-none');
+    if (msgVazio) msgVazio.classList.add('d-none');
+
     const paletaCores = [
         '#10b981', '#3b82f6', '#f59e0b', '#ef4444',
         '#8b5cf6', '#ec4899', '#14b8a6', '#f97316',
         '#6366f1', '#84cc16'
     ];
 
-    new Chart(canvas, {
+    chartCategoriasInstance = new Chart(canvas, {
         type: 'doughnut',
         data: {
-            labels: entradas.map(e => e[0]),
+            labels: entradas.map(e => e),
             datasets: [{
-                data: entradas.map(e => e[1]),
+                data: entradas.map(e => e),
                 backgroundColor: entradas.map((_, idx) => paletaCores[idx % paletaCores.length]),
                 borderWidth: 2,
                 borderColor: '#ffffff'
