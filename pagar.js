@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return categoria.categoriaPai || categoria.pai || categoria.categoriaPrincipal || null;
     }
 
-    // 2. CARREGA CATEGORIAS EM ÁRVORE HIERÁRQUICA (<optgroup> Pai A-Z -> Filhas A-Z)
+        // 2. CARREGA APENAS AS CATEGORIAS ANALÍTICAS DE CUSTO EM ORDEM ALFABÉTICA (A-Z)
     async function carregarDropdownCategoriasReais() {
         const selectForm = document.getElementById('selectCategoria');
         const selectFiltro = document.getElementById('filtroCategoria');
@@ -51,53 +51,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 const categorias = await response.json();
 
-                // Filtra apenas categorias de Custo (DESPESA)
-                const despesas = categorias.filter(cat => {
-                    const valorFluxo = cat.fluxo || cat.tipo || 'DESPESA';
-                    return valorFluxo.toString().toUpperCase() !== 'RECEITA';
-                });
-
-                const pais = despesas
-                    .filter(cat => !obterCategoriaPai(cat))
+                // Filtra apenas categorias de Custo (DESPESA) que sejam Analíticas (possuem pai)
+                const analiticasDespesa = categorias
+                    .filter(cat => {
+                        const valorFluxo = cat.fluxo || cat.tipo || 'DESPESA';
+                        return valorFluxo.toString().toUpperCase() !== 'RECEITA' && Boolean(obterCategoriaPai(cat));
+                    })
                     .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
 
                 selectForm.innerHTML = '<option value="">-- Selecione a Categoria Analítica --</option>';
                 selectFiltro.innerHTML = '<option value="">Todas as Analíticas</option>';
 
-                pais.forEach(pai => {
-                    const filhas = despesas
-                        .filter(cat => {
-                            const objPai = obterCategoriaPai(cat);
-                            return objPai && objPai.id === pai.id;
-                        })
-                        .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
-
-                    if (filhas.length > 0) {
-                        const grupoForm = document.createElement('optgroup');
-                        grupoForm.label = `📁 ${pai.nome}`;
-
-                        const grupoFiltro = document.createElement('optgroup');
-                        grupoFiltro.label = `📁 ${pai.nome}`;
-
-                        filhas.forEach(filha => {
-                            const optForm = document.createElement('option');
-                            optForm.value = filha.id;
-                            optForm.textContent = `↳ ${filha.nome}`;
-                            grupoForm.appendChild(optForm);
-
-                            const optFiltro = document.createElement('option');
-                            optFiltro.value = filha.id;
-                            optFiltro.textContent = `↳ ${filha.nome}`;
-                            grupoFiltro.appendChild(optFiltro);
-                        });
-
-                        selectForm.appendChild(grupoForm);
-                        selectFiltro.appendChild(grupoFiltro);
-                    }
+                analiticasDespesa.forEach(cat => {
+                    selectForm.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`;
+                    selectFiltro.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`;
                 });
             }
         } catch (e) { console.error('Erro ao carregar categorias', e); }
     }
+
 
     // 3. CARREGA OS CENTROS DE CUSTO EM ORDEM ALFABÉTICA (Formulário + Filtro)
     async function carregarDropdownCentros() {
