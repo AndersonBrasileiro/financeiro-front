@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     try {
+        await garantirChartJs();
+
         const [respDashboard, respDespesas, respReceitas] = await Promise.all([
             fetch(`${API_BASE_URL}/dashboard`, { method: 'GET', headers }),
             fetch(`${API_BASE_URL}/lancamentos/filtrar?tipo=DESPESA`, { method: 'GET', headers }),
@@ -39,21 +41,41 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (document.getElementById('txtSaldoProjetado')) document.getElementById('txtSaldoProjetado').textContent = formatarMoeda(projetado);
         }
 
-        if (typeof Chart !== 'undefined') {
-            const despesas = respDespesas.ok ? await respDespesas.json() : [];
-            const receitas = respReceitas.ok ? await respReceitas.json() : [];
+        const despesasRaw = respDespesas.ok ? await respDespesas.json() : [];
+        const receitasRaw = respReceitas.ok ? await respReceitas.json() : [];
 
-            const mesReferencia = descobrirMesReferencia([...receitas, ...despesas]);
-            renderizarGraficoMensal(receitas, despesas, mesReferencia);
-            inicializarSeletorEGraficoCategorias(despesas, mesReferencia);
-        }
+        // Normaliza dataVencimento para "YYYY-MM-DD" mesmo se vier como array [2026, 10, 15]
+        const despesas = despesasRaw.map(l => ({ ...l, dataVencimento: normalizarDataISO(l.dataVencimento) }));
+        const receitas = receitasRaw.map(l => ({ ...l, dataVencimento: normalizarDataISO(l.dataVencimento) }));
+
+        const mesReferencia = descobrirMesReferencia([...receitas, ...despesas]);
+        renderizarGraficoMensal(receitas, despesas, mesReferencia);
+        inicializarSeletorEGraficoCategorias(despesas, mesReferencia);
 
     } catch (error) {
-        console.error('Erro de conexão com o backend:', error);
+        console.error('Erro ao montar dashboard:', error);
     }
 });
 
-// Descobre o mês mais recente com lançamentos (ou usa o mês atual do sistema)
+function garantirChartJs() {
+    if (typeof Chart !== 'undefined') return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://jsdelivr.net';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+function normalizarDataISO(data) {
+    if (!data) return '';
+    if (Array.isArray(data) && data.length >= 3) {
+        return `${data}-${String(data).padStart(2, '0')}-${String(data).padStart(2, '0')}`;
+    }
+    return String(data);
+}
+
 function descobrirMesReferencia(todosLancamentos) {
     const hoje = new Date();
     const chaveHoje = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
@@ -68,6 +90,7 @@ function descobrirMesReferencia(todosLancamentos) {
     const temNoMesAtual = datasValidas.some(d => d.startsWith(chaveHoje));
     return temNoMesAtual ? chaveHoje : datasValidas[datasValidas.length - 1].substring(0, 7);
 }
+
 // GRÁFICO 1: BARRAS AGRUPADAS (RECEITAS X DESPESAS - JANELA DE 6 MESES)
 function renderizarGraficoMensal(receitas, despesas, mesReferencia) {
     const canvas = document.getElementById('graficoMensal');
