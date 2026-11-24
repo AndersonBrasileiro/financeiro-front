@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch(`${API_BASE_URL}/centros-custo/${id}/status`, {
-                method: 'PATCH',
+                method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
