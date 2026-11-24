@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     try {
-        // Busca em paralelo os KPIs do Dashboard e os Lançamentos para os Gráficos
-        const [respDashboard, respLancamentos] = await Promise.all([
+        const [respDashboard, respDespesas, respReceitas] = await Promise.all([
             fetch(`${API_BASE_URL}/dashboard`, { method: 'GET', headers }),
-            fetch(`${API_BASE_URL}/lancamentos`, { method: 'GET', headers })
+            fetch(`${API_BASE_URL}/lancamentos/filtrar?tipo=DESPESA`, { method: 'GET', headers }),
+            fetch(`${API_BASE_URL}/lancamentos/filtrar?tipo=RECEITA`, { method: 'GET', headers })
         ]);
 
         if (respDashboard.status === 401 || respDashboard.status === 403) {
@@ -39,10 +39,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (document.getElementById('txtSaldoProjetado')) document.getElementById('txtSaldoProjetado').textContent = formatarMoeda(projetado);
         }
 
-        if (respLancamentos.ok && typeof Chart !== 'undefined') {
-            const lancamentos = await respLancamentos.json();
-            renderizarGraficoMensal(lancamentos);
-            renderizarGraficoCategorias(lancamentos);
+        if (typeof Chart !== 'undefined') {
+            const despesas = respDespesas.ok ? await respDespesas.json() : [];
+            const receitas = respReceitas.ok ? await respReceitas.json() : [];
+
+            renderizarGraficoMensal(receitas, despesas);
+            renderizarGraficoCategorias(despesas);
+        } else {
+            console.error('Biblioteca Chart.js não foi carregada no dashboard.html.');
         }
 
     } catch (error) {
@@ -51,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // GRÁFICO 1: BARRAS AGRUPADAS (RECEITAS X DESPESAS DOS ÚLTIMOS 6 MESES)
-function renderizarGraficoMensal(lancamentos) {
+function renderizarGraficoMensal(receitas, despesas) {
     const canvas = document.getElementById('graficoMensal');
     if (!canvas) return;
 
@@ -59,7 +63,6 @@ function renderizarGraficoMensal(lancamentos) {
     const meses = [];
     const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-    // Gera os últimos 6 meses (do mais antigo para o atual)
     for (let i = 5; i >= 0; i--) {
         const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
         const ano = d.getFullYear();
@@ -72,17 +75,16 @@ function renderizarGraficoMensal(lancamentos) {
         });
     }
 
-    lancamentos.forEach(l => {
+    receitas.forEach(l => {
         if (!l.dataVencimento) return;
-        const chaveLancamento = l.dataVencimento.substring(0, 7); // "YYYY-MM"
-        const mesAlvo = meses.find(m => m.chave === chaveLancamento);
-        if (mesAlvo) {
-            if (l.tipoLancamento === 'RECEITA') {
-                mesAlvo.receitas += Number(l.valor || 0);
-            } else if (l.tipoLancamento === 'DESPESA') {
-                mesAlvo.despesas += Number(l.valor || 0);
-            }
-        }
+        const mesAlvo = meses.find(m => m.chave === l.dataVencimento.substring(0, 7));
+        if (mesAlvo) mesAlvo.receitas += Number(l.valor || 0);
+    });
+
+    despesas.forEach(l => {
+        if (!l.dataVencimento) return;
+        const mesAlvo = meses.find(m => m.chave === l.dataVencimento.substring(0, 7));
+        if (mesAlvo) mesAlvo.despesas += Number(l.valor || 0);
     });
 
     new Chart(canvas, {
@@ -130,7 +132,7 @@ function renderizarGraficoMensal(lancamentos) {
 }
 
 // GRÁFICO 2: ROSCA (DESPESAS POR CATEGORIA NO MÊS ATUAL)
-function renderizarGraficoCategorias(lancamentos) {
+function renderizarGraficoCategorias(despesas) {
     const canvas = document.getElementById('graficoCategorias');
     const msgVazio = document.getElementById('msgSemDespesasGrafico');
     if (!canvas) return;
@@ -139,9 +141,8 @@ function renderizarGraficoCategorias(lancamentos) {
     const chaveMesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
 
     const agrupado = {};
-    lancamentos.forEach(l => {
-        if (l.tipoLancamento !== 'DESPESA' || !l.dataVencimento) return;
-        if (!l.dataVencimento.startsWith(chaveMesAtual)) return;
+    despesas.forEach(l => {
+        if (!l.dataVencimento || !l.dataVencimento.startsWith(chaveMesAtual)) return;
 
         const nomeCategoria = l.categoria ? l.categoria.nome : 'Sem Categoria';
         agrupado[nomeCategoria] = (agrupado[nomeCategoria] || 0) + Number(l.valor || 0);
