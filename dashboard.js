@@ -185,7 +185,7 @@ function inicializarSeletorEGraficoCategorias(despesas, mesInicial) {
         return;
     }
 
-    const mesSelecionado = mesesDisponiveis.includes(mesInicial) ? mesInicial : mesesDisponiveis;
+    const mesSelecionado = mesesDisponiveis.includes(mesInicial) ? mesInicial : mesesDisponiveis.at(0);
 
     if (subtitulo && subtitulo.parentElement && subtitulo.parentElement.parentElement) {
         const headerCard = subtitulo.parentElement.parentElement;
@@ -213,6 +213,7 @@ function inicializarSeletorEGraficoCategorias(despesas, mesInicial) {
 
     renderizarGraficoCategorias(despesas, mesSelecionado);
 }
+
 
 function renderizarGraficoCategorias(despesas, chaveMes) {
     const canvas = document.getElementById('graficoCategorias');
