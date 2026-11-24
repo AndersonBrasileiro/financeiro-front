@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarDropdownCentrosReceita();
     listarLancamentosReceber();
 
-    // 1. CARREGA AS CONTAS (Formulário + Filtro)
+    // 1. CARREGA AS CONTAS EM ORDEM ALFABÉTICA (Formulário + Filtro)
     async function carregarDropdownContas() {
         const selectForm = document.getElementById('selectConta');
         const selectFiltro = document.getElementById('filtroConta');
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (response.ok) {
                 const contas = await response.json();
+                contas.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
                 selectForm.innerHTML = '<option value="">-- Selecione a Conta --</option>';
                 selectFiltro.innerHTML = '<option value="">Todas</option>';
                 contas.forEach(c => {
@@ -33,7 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar contas', e); }
     }
 
-    // 2. CARREGA APENAS AS CATEGORIAS ANALÍTICAS DE RECEITA (Formulário + Filtro)
+    // Helper para identificar Categoria Pai em qualquer nomenclatura
+    function obterCategoriaPai(categoria) {
+        return categoria.categoriaPai || categoria.pai || categoria.categoriaPrincipal || null;
+    }
+
+    // 2. CARREGA CATEGORIAS DE RECEITA EM ÁRVORE HIERÁRQUICA (<optgroup> Pai A-Z -> Filhas A-Z)
     async function carregarDropdownCategoriasReais() {
         const selectForm = document.getElementById('selectCategoria');
         const selectFiltro = document.getElementById('filtroCategoria');
@@ -44,22 +50,56 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (response.ok) {
                 const categorias = await response.json();
+
+                // Filtra apenas categorias de Receita
+                const receitas = categorias.filter(cat => {
+                    const valorFluxo = cat.fluxo || cat.tipo || 'DESPESA';
+                    return valorFluxo.toString().toUpperCase() === 'RECEITA';
+                });
+
+                const pais = receitas
+                    .filter(cat => !obterCategoriaPai(cat))
+                    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+
                 selectForm.innerHTML = '<option value="">-- Selecione a Categoria Analítica --</option>';
                 selectFiltro.innerHTML = '<option value="">Todas as Analíticas</option>';
 
-                categorias.forEach(cat => {
-                    const valorFluxo = cat.fluxo || cat.tipo || 'DESPESA';
-                    if (valorFluxo.toString().toUpperCase() === 'RECEITA' && cat.categoriaPai) {
-                        const label = `${cat.nome} (${cat.categoriaPai.nome})`;
-                        selectForm.innerHTML += `<option value="${cat.id}">${label}</option>`;
-                        selectFiltro.innerHTML += `<option value="${cat.id}">${label}</option>`;
+                pais.forEach(pai => {
+                    const filhas = receitas
+                        .filter(cat => {
+                            const objPai = obterCategoriaPai(cat);
+                            return objPai && objPai.id === pai.id;
+                        })
+                        .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+
+                    if (filhas.length > 0) {
+                        const grupoForm = document.createElement('optgroup');
+                        grupoForm.label = `📁 ${pai.nome}`;
+
+                        const grupoFiltro = document.createElement('optgroup');
+                        grupoFiltro.label = `📁 ${pai.nome}`;
+
+                        filhas.forEach(filha => {
+                            const optForm = document.createElement('option');
+                            optForm.value = filha.id;
+                            optForm.textContent = `↳ ${filha.nome}`;
+                            grupoForm.appendChild(optForm);
+
+                            const optFiltro = document.createElement('option');
+                            optFiltro.value = filha.id;
+                            optFiltro.textContent = `↳ ${filha.nome}`;
+                            grupoFiltro.appendChild(optFiltro);
+                        });
+
+                        selectForm.appendChild(grupoForm);
+                        selectFiltro.appendChild(grupoFiltro);
                     }
                 });
             }
         } catch (e) { console.error('Erro ao carregar categorias reais', e); }
     }
 
-    // 3. CARREGA OS CENTROS DE CUSTO DE RECEITA (Formulário + Filtro)
+    // 3. CARREGA OS CENTROS DE RECEITA EM ORDEM ALFABÉTICA (Formulário + Filtro)
     async function carregarDropdownCentrosReceita() {
         const selectForm = document.getElementById('selectCentroCusto');
         const selectFiltro = document.getElementById('filtroCentroCusto');
@@ -70,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (response.ok) {
                 const centros = await response.json();
+                centros.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
                 selectForm.innerHTML = '<option value="">-- Selecione o Centro de Receita --</option>';
                 selectFiltro.innerHTML = '<option value="">Todos</option>';
                 centros.forEach(centro => {
@@ -133,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             exibirAlerta('Erro de comunicação com o servidor.', 'danger');
         }
     });
-    // 5. EVENTOS DOS BOTÕES DE FILTRO, MODAL E CANCELAR EDIÇÃO
+        // 5. EVENTOS DOS BOTÕES DE FILTRO, MODAL E CANCELAR EDIÇÃO
     document.getElementById('btnAplicarFiltros').addEventListener('click', () => listarLancamentosReceber());
     document.getElementById('btnLimparFiltros').addEventListener('click', () => {
         document.getElementById('filtroDataInicio').value = '';

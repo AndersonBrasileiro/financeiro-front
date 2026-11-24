@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarDropdownCentros();
     listarLancamentosPagar();
 
-    // 1. CARREGA AS CONTAS (Formulário + Filtro)
+    // 1. CARREGA AS CONTAS EM ORDEM ALFABÉTICA (Formulário + Filtro)
     async function carregarDropdownContas() {
         const selectForm = document.getElementById('selectConta');
         const selectFiltro = document.getElementById('filtroConta');
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (response.ok) {
                 const contas = await response.json();
+                contas.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
                 selectForm.innerHTML = '<option value="">-- Selecione a Conta --</option>';
                 selectFiltro.innerHTML = '<option value="">Todas</option>';
                 contas.forEach(c => {
@@ -33,7 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error('Erro ao carregar contas', e); }
     }
 
-    // 2. CARREGA APENAS AS CATEGORIAS ANALÍTICAS (Formulário + Filtro)
+    // Helper para identificar Categoria Pai em qualquer nomenclatura
+    function obterCategoriaPai(categoria) {
+        return categoria.categoriaPai || categoria.pai || categoria.categoriaPrincipal || null;
+    }
+
+    // 2. CARREGA CATEGORIAS EM ÁRVORE HIERÁRQUICA (<optgroup> Pai A-Z -> Filhas A-Z)
     async function carregarDropdownCategoriasReais() {
         const selectForm = document.getElementById('selectCategoria');
         const selectFiltro = document.getElementById('filtroCategoria');
@@ -44,23 +50,56 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (response.ok) {
                 const categorias = await response.json();
+
+                // Filtra apenas categorias de Custo (DESPESA)
+                const despesas = categorias.filter(cat => {
+                    const valorFluxo = cat.fluxo || cat.tipo || 'DESPESA';
+                    return valorFluxo.toString().toUpperCase() !== 'RECEITA';
+                });
+
+                const pais = despesas
+                    .filter(cat => !obterCategoriaPai(cat))
+                    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+
                 selectForm.innerHTML = '<option value="">-- Selecione a Categoria Analítica --</option>';
                 selectFiltro.innerHTML = '<option value="">Todas as Analíticas</option>';
 
-                categorias.forEach(cat => {
-                    const valorFluxo = cat.fluxo || cat.tipo || 'DESPESA';
-                    // Regra estrita: apenas DESPESA e apenas Analíticas (que possuem categoriaPai)
-                    if (valorFluxo.toString().toUpperCase() === 'DESPESA' && cat.categoriaPai) {
-                        const label = `${cat.nome} (${cat.categoriaPai.nome})`;
-                        selectForm.innerHTML += `<option value="${cat.id}">${label}</option>`;
-                        selectFiltro.innerHTML += `<option value="${cat.id}">${label}</option>`;
+                pais.forEach(pai => {
+                    const filhas = despesas
+                        .filter(cat => {
+                            const objPai = obterCategoriaPai(cat);
+                            return objPai && objPai.id === pai.id;
+                        })
+                        .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+
+                    if (filhas.length > 0) {
+                        const grupoForm = document.createElement('optgroup');
+                        grupoForm.label = `📁 ${pai.nome}`;
+
+                        const grupoFiltro = document.createElement('optgroup');
+                        grupoFiltro.label = `📁 ${pai.nome}`;
+
+                        filhas.forEach(filha => {
+                            const optForm = document.createElement('option');
+                            optForm.value = filha.id;
+                            optForm.textContent = `↳ ${filha.nome}`;
+                            grupoForm.appendChild(optForm);
+
+                            const optFiltro = document.createElement('option');
+                            optFiltro.value = filha.id;
+                            optFiltro.textContent = `↳ ${filha.nome}`;
+                            grupoFiltro.appendChild(optFiltro);
+                        });
+
+                        selectForm.appendChild(grupoForm);
+                        selectFiltro.appendChild(grupoFiltro);
                     }
                 });
             }
         } catch (e) { console.error('Erro ao carregar categorias', e); }
     }
 
-    // 3. CARREGA OS CENTROS DE CUSTO (Formulário + Filtro)
+    // 3. CARREGA OS CENTROS DE CUSTO EM ORDEM ALFABÉTICA (Formulário + Filtro)
     async function carregarDropdownCentros() {
         const selectForm = document.getElementById('selectCentroCusto');
         const selectFiltro = document.getElementById('filtroCentroCusto');
@@ -71,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (response.ok) {
                 const centros = await response.json();
+                centros.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
                 selectForm.innerHTML = '<option value="">-- Selecione o Centro de Custo --</option>';
                 selectFiltro.innerHTML = '<option value="">Todos</option>';
                 centros.forEach(centro => {
@@ -135,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             exibirAlerta('Erro de comunicação com o servidor.', 'danger');
         }
     });
-        // 5. EVENTOS DOS BOTÕES DE FILTRO E CANCELAR EDIÇÃO
+    // 5. EVENTOS DOS BOTÕES DE FILTRO E CANCELAR EDIÇÃO
     document.getElementById('btnAplicarFiltros').addEventListener('click', () => listarLancamentosPagar());
     document.getElementById('btnLimparFiltros').addEventListener('click', () => {
         document.getElementById('filtroDataInicio').value = '';
@@ -237,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 despesas = despesas.filter(l => l.pago);
             }
 
-                        // Calcula a soma apenas das despesas filtradas que estão EM ABERTO (!l.pago)
             const somaEmAberto = despesas
                 .filter(l => !l.pago)
                 .reduce((acumulador, item) => acumulador + item.valor, 0);
@@ -256,7 +295,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 tabela.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Nenhuma despesa encontrada para os filtros selecionados.</td></tr>`;
                 return;
             }
-
             despesas.forEach(l => {
                 const statusBadge = l.pago
                     ? `<span class="badge bg-success">Paga</span>${l.dataPagamento ? `<br><small class="text-muted" style="font-size:0.7rem;">em ${new Date(l.dataPagamento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</small>` : ''}`
@@ -349,25 +387,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (item) carregarParaEdicao(item);
             });
         });
-    }
-
-
-    async function executarAcaoPut(id, acao, mensagemConfirmacao) {
-        if (!confirm(mensagemConfirmacao)) return;
-        try {
-            const response = await fetch(`${API_BASE_URL}/lancamentos/${id}/${acao}`, {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
-                exibirAlerta(acao === 'baixar' ? 'Título baixado com sucesso!' : 'Título estornado com sucesso!', 'success');
-                carregarDropdownContas();
-                listarLancamentosPagar();
-            } else {
-                const err = await response.json().catch(() => ({}));
-                exibirAlerta(err.message || 'Não foi possível concluir a operação.', 'danger');
-            }
-        } catch (e) { console.error(e); }
     }
 
     async function excluirLancamento(id) {
